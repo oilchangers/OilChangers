@@ -2,27 +2,27 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './LoginForm.css';
 import { API_BASE_URL, ACCESS_TOKEN_NAME } from '../../constants/apiConstants';
+import {checkValidationFormAllControls} from '../../constants/validation';
 import { withRouter } from "react-router-dom";
-import Avatar from '@mui/material/Avatar';
+
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
+
 import Box from '@mui/material/Box';
 
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function LoginForm(props) {
+    const [responseState,setResponceS] = useState([]); 
+   
     const [state, setState] = useState({
         email: "",
         password: "",
         successMessage: null
     })
+    const [objError, setObjError] = useState('')
     const handleChange = (e) => {
         const { id, value } = e.target
         setState(prevState => ({
@@ -33,22 +33,42 @@ function LoginForm(props) {
 
     const handleSubmitClick = (e) => {
         e.preventDefault();
+        
+        var objValidation =checkValidationFormAllControls(document.forms[0].elements,false,[])
+        if(objValidation.valid!==false){
+            
+            setObjError(objValidation);
+            return ;
+        }
         const payload = {
             "email": state.email,
             "password": state.password,
         }
-        localStorage.setItem(ACCESS_TOKEN_NAME, '12345677889');
-        redirectToHome();
-        return
-        axios.post(API_BASE_URL + '/user/login', payload)
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token token=--WEBRmfcyzgRpxrWEB--'
+          }
+        
+        axios.post(API_BASE_URL + '/members/auth', payload,{
+            headers: headers
+          })
             .then(function (response) {
+                
                 if (response.status === 200) {
                     setState(prevState => ({
                         ...prevState,
                         'successMessage': 'Login successful. Redirecting to home page..'
                     }))
-                    localStorage.setItem(ACCESS_TOKEN_NAME, response.data.token);
-                    redirectToHome();
+                    setResponceS(response);
+                     
+                    localStorage.setItem('data', JSON.stringify(response));
+                    localStorage.setItem(ACCESS_TOKEN_NAME, response.data.apikey);
+                    
+                    setTimeout(() => {
+                        props.history.push('/home',{state:response.data})
+                        //redirectToHome();
+                    }, 2000);
+                    
                     props.showError(null)
                 }
                 else if (response.code === 204) {
@@ -59,12 +79,16 @@ function LoginForm(props) {
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                props.showError("Username and password do not match");
+                console.log("Username and password do not match");
             });
+            console.log(props);
     }
     const redirectToHome = () => {
+        console.log("updated");
         props.updateTitle('Home')
-        props.history.push('/home');
+       
+        props.history.push("/home");
     }
     const redirectToRegister = () => {
         props.history.push('/register');
@@ -75,8 +99,8 @@ function LoginForm(props) {
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
-                <Box component="form" noValidate sx={{ mt: 1 }}>
-                    <form>
+                <Box component="form" id="login" name="login" noValidate sx={{ mt: 1 }}>
+                    
                         <div className="form-group text-left">
 
                             <TextField margin="normal"
@@ -85,6 +109,7 @@ function LoginForm(props) {
                                 id="email"
                                 label="Email Address"
                                 name="email"
+                                type="email"
                                 autoComplete="email"
                                 autoFocus
                                 value={state.email}
@@ -92,6 +117,10 @@ function LoginForm(props) {
                             />
                             {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
                         </div>
+                        <span style={{
+                            fontWeight: 'bold',
+                            color: 'red',
+                        }}>{objError.email}</span>
                         <div className="form-group text-left">
 
                             <TextField margin="normal"
@@ -106,6 +135,11 @@ function LoginForm(props) {
                                 onChange={handleChange}
                             />
                         </div>
+
+                        <span style={{
+                            fontWeight: 'bold',
+                            color: 'red',
+                        }}>{objError.password}</span>
                         <div className="form-check">
                         </div>
                         <Button
@@ -115,7 +149,7 @@ function LoginForm(props) {
                             sx={{ mt: 3, mb: 2 }}
                             onClick={handleSubmitClick}
                         >Submit</Button>
-                    </form>
+                    
                     <div className="alert alert-success mt-2" style={{ display: state.successMessage ? 'block' : 'none' }} role="alert">
                         {state.successMessage}
                     </div>

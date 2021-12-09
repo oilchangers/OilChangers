@@ -1,0 +1,69 @@
+.App {
+  text-align: center;
+}
+
+.hv-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ 
+.grid-col {
+  display: table-cell;
+  width: 33%;
+  text-align: left;
+  margin-top: 2%;
+  padding: 1%;
+
+}
+.col-total{
+  text-align: left;
+  padding-left: 5px;
+
+}
+.col-offer{
+  display: table-cell;
+  text-align: justify;
+  margin-top: 3%;
+  padding-bottom: 4px;
+  margin-left: 10%;
+
+
+}
+.align-h{
+  text-align: center;
+  margin-top: 3%;
+}
+.offers{margin-left: 0.1%;}
+.css-11bs5pa-MuiPaper-root{
+  box-shadow: none !important;
+}
+button.btn.btn-primary.btn-submit {
+  float: right;
+  margin-right: 12%;
+  margin-top: 1%;
+} 
+.grid-row {
+    width: 100%;
+    /* float: left; */
+    display: table;
+    /* text-align: left; */
+}
+
+.offers{
+  display: flex;
+}
+
+.btn-primary{
+  background-color: grey !important;
+  border: none !important;
+}
+
+.btn-primary:hover{
+  background-color: #007bff!important
+}
+
+.Update_Button{
+  outline: none !important;
+}

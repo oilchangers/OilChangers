@@ -20,6 +20,7 @@ function Header(props) {
         }
     }
     function handleLogout() {
+        localStorage.clear();
         localStorage.removeItem(ACCESS_TOKEN_NAME)
         props.history.push('/login')
     }
