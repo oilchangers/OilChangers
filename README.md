@@ -30,23 +30,3 @@ If you found this project useful, then make sure to star the project.
 2. Run `npm install` or `yarn install`  
 3. And then use `npm run start` or `yarn start` command to start the project in browser. 
 
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/ArianeJDB"><img src="https://avatars2.githubusercontent.com/u/45037868?v=4" width="100px;" alt=""/><br /><sub><b>Ari</b></sub></a><br /><a href="https://github.com/codeclassifiers/loginforms/commits?author=ArianeJDB" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/DeepaPrasanna"><img src="https://avatars1.githubusercontent.com/u/54895192?v=4" width="100px;" alt=""/><br /><sub><b>Deepa Prasanna</b></sub></a><br /><a href="https://github.com/codeclassifiers/loginforms/commits?author=DeepaPrasanna" title="Code">💻</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
