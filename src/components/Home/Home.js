@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { withRouter } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import axios from 'axios';
 import { ADMIN_API_BASE_URL } from '../../constants/apiConstants';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
- 
 
 const Box = styled(Paper)(({ theme }) => ({ width: '100%', marginTop: '2%', marginBottom: '2%' }));
 
-function Home(props) {
-  
-  const [dataObj] = useState(props.location.state.state)
+function Home() {
+
+  // at the top of your component
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [dataObj] = useState(location.state);
   var [offerData, setStateOfferData] = useState([])
   const headers = {
     'Content-Type': 'application/json',
@@ -33,11 +35,11 @@ function Home(props) {
       });
   }, [])
   function redirectToLogin() {
-    props.history.push('/login');
+    navigate('/login');
   }
   function redirectToUpdateProfile() {
     // props.updateTitle('Upadte')//
-    props.history.push('/UpdateProfileForm',{state:props.location.state.state});
+    navigate('/UpdateProfileForm', { state: location.state });
   }
   return (
 
@@ -51,7 +53,7 @@ function Home(props) {
         </Grid>
 
         <Grid className="grid-row">
-          
+
           <div className="grid-col"><label>City, State :</label><span>{dataObj.city + ' ' + dataObj.state}</span></div>
           <div className="grid-col"><label>Gender :</label><span>{dataObj.gender}</span></div>
 
@@ -79,9 +81,9 @@ function Home(props) {
         </Grid>
         <Grid className={"row offers grid-row"}>
           {offerData.map((res, i) => {
-             
+
             // Return the element. Also pass key  
-              
+
             return (<div className={'col-4 border col-offer'}><h5 className={'align-h'}>{res.name}</h5><span>{res.description}</span></div>)
           })}
 
@@ -97,4 +99,4 @@ function Home(props) {
   )
 }
 
-export default withRouter(Home);
+export default Home;

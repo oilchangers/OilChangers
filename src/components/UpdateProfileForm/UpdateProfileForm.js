@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { checkValidationFormAllControls } from '../../constants/validation';
 import { API_BASE_URL, ACCESS_TOKEN_NAME } from '../../constants/apiConstants';
-import { withRouter } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -11,16 +11,16 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 // import Box from '@mui/material/Box';
- 
 
- 
+
+
 
 function UpdateProfileForm(props) {
     const [objError, setObjError] = useState('')
-    // const [dataObj, setStateData] = useState(JSON.parse(localStorage.getItem("data")))
-    console.log(props);
-    var objData = props.location.state.state
-    var stateObj={
+    const navigate = useNavigate();
+    const location = useLocation();
+    var objData = location.state
+    var stateObj = {
         fname: objData.first_name,
         lname: objData.last_name,
         phone: objData.phone,
@@ -33,11 +33,11 @@ function UpdateProfileForm(props) {
         country: objData.country,
         birthday: objData.birthday,
         gen: objData.gender,
-        
+
 
     }
     const [state, setState] = useState(stateObj)
-     
+
     const handleChange = (e) => {
         const { id, value } = e.target
         setState(prevState => ({
@@ -69,7 +69,7 @@ function UpdateProfileForm(props) {
             }
             const headers = {
                 'Content-Type': 'application/json',
-                'Authorization': 'Token token=--WEBRmfcyzgRpxrWEB--'+':'+objData.apikey
+                'Authorization': 'Token token=--WEBRmfcyzgRpxrWEB--' + ':' + objData.apikey
             }
 
             axios.put(API_BASE_URL + '/members', payload, {
@@ -83,12 +83,12 @@ function UpdateProfileForm(props) {
                         }))
                         console.log(response.data.apikey);
                         localStorage.setItem(ACCESS_TOKEN_NAME, response.data.apikey);
-                        var localStoragedata=JSON.parse(localStorage.getItem('data'))
-                        localStoragedata.data=response.data
+                        var localStoragedata = JSON.parse(localStorage.getItem('data'))
+                        localStoragedata.data = response.data
                         localStorage.setItem('data', JSON.stringify(localStoragedata));
                         setTimeout(() => {
                             props.updateTitle('Update Profile')
-                            props.history.push('/home',{state:response.data})
+                            navigate('/home', { state: response.data })
                             //redirectToHome();
                         }, 2000);
                         props.showError(null)
@@ -106,10 +106,10 @@ function UpdateProfileForm(props) {
     }
     const redirectToHome = () => {
         props.updateTitle('Home')
-        props.history.push('/home');
+        navigate('/home');
     }
-    
-   
+
+
     const handleSubmitClick = (e) => {
         e.preventDefault();
         var objValidation = checkValidationFormAllControls(document.forms[0].elements, false, [])
@@ -123,7 +123,7 @@ function UpdateProfileForm(props) {
 
         sendDetailsToServer()  // 
     }
- 
+
     const theme = createTheme();
     return (
         <ThemeProvider theme={theme}>
@@ -328,148 +328,148 @@ function UpdateProfileForm(props) {
 
                         <Grid item xs={12} md={4}>
 
-                        <div className="form-group text-left">
-                            <TextField margin="normal"
-                                required
-                                fullWidth
-                                id="address1"
-                                name="first_address"
-                                autoComplete="address1"
-                                autoFocus
-                                label="Enter address"
-                                value={state.address1}
-                                onChange={handleChange}
-                            />
+                            <div className="form-group text-left">
+                                <TextField margin="normal"
+                                    required
+                                    fullWidth
+                                    id="address1"
+                                    name="first_address"
+                                    autoComplete="address1"
+                                    autoFocus
+                                    label="Enter address"
+                                    value={state.address1}
+                                    onChange={handleChange}
+                                />
 
 
-                        </div>
+                            </div>
 
-                        <span style={{
-                            fontWeight: 'bold',
-                            color: 'red',
-                        }}>{objError.first_address}</span>
-
-                        </Grid>
-
-                        <Grid item xs={12} md={4}>
-
-                        <div className="form-group text-left">
-                            <TextField margin="normal"
-                                required
-                                fullWidth
-                                id="address2"
-                                name="second_address"
-                                autoComplete="address2"
-                                autoFocus
-                                label="Enter address"
-                                value={state.address2}
-                                onChange={handleChange}
-                            />
-
-
-                        </div>
-
-                        <span style={{
-                            fontWeight: 'bold',
-                            color: 'red',
-                        }}>{objError.second_address}</span>
+                            <span style={{
+                                fontWeight: 'bold',
+                                color: 'red',
+                            }}>{objError.first_address}</span>
 
                         </Grid>
 
                         <Grid item xs={12} md={4}>
-                        <div className="form-group text-left">
-                            <TextField margin="normal"
-                                required
-                                fullWidth
-                                id="city"
 
-                                name="city"
-                                autoComplete="city"
-                                autoFocus
-                                label="Enter City"
-                                value={state.city}
-                                onChange={handleChange}
-                            />
+                            <div className="form-group text-left">
+                                <TextField margin="normal"
+                                    required
+                                    fullWidth
+                                    id="address2"
+                                    name="second_address"
+                                    autoComplete="address2"
+                                    autoFocus
+                                    label="Enter address"
+                                    value={state.address2}
+                                    onChange={handleChange}
+                                />
 
-                            {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
-                        </div>
-                        <span style={{
-                            fontWeight: 'bold',
-                            color: 'red',
-                        }}>{objError.city}</span>
+
+                            </div>
+
+                            <span style={{
+                                fontWeight: 'bold',
+                                color: 'red',
+                            }}>{objError.second_address}</span>
+
                         </Grid>
 
                         <Grid item xs={12} md={4}>
-                        <div className="form-group text-left">
-                            <TextField margin="normal"
-                                required
-                                fullWidth
-                                id="state"
-                                label="Enter State"
-                                name="state"
-                                autoComplete="state"
-                                autoFocus
+                            <div className="form-group text-left">
+                                <TextField margin="normal"
+                                    required
+                                    fullWidth
+                                    id="city"
 
-                                value={state.state}
-                                onChange={handleChange}
-                            />
-                            {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
-                        </div>
+                                    name="city"
+                                    autoComplete="city"
+                                    autoFocus
+                                    label="Enter City"
+                                    value={state.city}
+                                    onChange={handleChange}
+                                />
 
-                        <span style={{
-                            fontWeight: 'bold',
-                            color: 'red',
-                        }}>{objError.state}</span>
+                                {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                            </div>
+                            <span style={{
+                                fontWeight: 'bold',
+                                color: 'red',
+                            }}>{objError.city}</span>
                         </Grid>
 
-                       
-
                         <Grid item xs={12} md={4}>
-                        <div className="form-group text-left">
-                            <TextField margin="normal"
-                                required
-                                fullWidth
-                                id="country"
-                                label="Enter Country"
-                                name="country"
-                                autoComplete="country"
-                                autoFocus
+                            <div className="form-group text-left">
+                                <TextField margin="normal"
+                                    required
+                                    fullWidth
+                                    id="state"
+                                    label="Enter State"
+                                    name="state"
+                                    autoComplete="state"
+                                    autoFocus
 
-                                value={state.country}
-                                onChange={handleChange}
-                            />
-                            {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
-                        </div>
+                                    value={state.state}
+                                    onChange={handleChange}
+                                />
+                                {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                            </div>
 
-                        <span style={{
-                            fontWeight: 'bold',
-                            color: 'red',
-                        }}>{objError.country}</span>
+                            <span style={{
+                                fontWeight: 'bold',
+                                color: 'red',
+                            }}>{objError.state}</span>
                         </Grid>
 
-                       
+
 
                         <Grid item xs={12} md={4}>
-                        <div className="form-group text-left">
-                            <TextField margin="normal"
-                                required
-                                fullWidth
-                                id="gen"
-                                label="Enter Gender"
-                                name="gender"
-                                autoComplete="gen"
-                                autoFocus
+                            <div className="form-group text-left">
+                                <TextField margin="normal"
+                                    required
+                                    fullWidth
+                                    id="country"
+                                    label="Enter Country"
+                                    name="country"
+                                    autoComplete="country"
+                                    autoFocus
 
-                                value={state.gen}
-                                onChange={handleChange}
-                            />
-                             
-                            {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
-                        </div>
-                        <span style={{
-                            fontWeight: 'bold',
-                            color: 'red',
-                        }}>{objError.gender}</span>
+                                    value={state.country}
+                                    onChange={handleChange}
+                                />
+                                {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                            </div>
+
+                            <span style={{
+                                fontWeight: 'bold',
+                                color: 'red',
+                            }}>{objError.country}</span>
+                        </Grid>
+
+
+
+                        <Grid item xs={12} md={4}>
+                            <div className="form-group text-left">
+                                <TextField margin="normal"
+                                    required
+                                    fullWidth
+                                    id="gen"
+                                    label="Enter Gender"
+                                    name="gender"
+                                    autoComplete="gen"
+                                    autoFocus
+
+                                    value={state.gen}
+                                    onChange={handleChange}
+                                />
+
+                                {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                            </div>
+                            <span style={{
+                                fontWeight: 'bold',
+                                color: 'red',
+                            }}>{objError.gender}</span>
                         </Grid>
 
 
@@ -501,4 +501,4 @@ function UpdateProfileForm(props) {
     )
 }
 
-export default withRouter(UpdateProfileForm);
+export default UpdateProfileForm;
