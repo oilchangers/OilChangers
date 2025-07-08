@@ -3,17 +3,18 @@ import axios from 'axios';
 import './RegistrationForm.css';
 import { checkValidationFormAllControls } from '../../constants/validation';
 import { API_BASE_URL, ACCESS_TOKEN_NAME } from '../../constants/apiConstants';
-import { withRouter } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
- import TextField from '@mui/material/TextField';
+import TextField from '@mui/material/TextField';
 
- import Checkbox from '@mui/material/Checkbox';
- 
+import Checkbox from '@mui/material/Checkbox';
+
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
- function RegistrationForm(props) {
+function RegistrationForm(props) {
+    const navigate = useNavigate();
     const [state, setState] = useState({
         fname: "",
         lname: "",
@@ -32,7 +33,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
         sms_opt_out: "",
 
     })
-     
+
     const [nameError, setNameError] = useState('')
     const [objError, setObjError] = useState('')
     const handleChange = (e) => {
@@ -87,6 +88,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
                     }
                 })
                 .catch(function (error) {
+                    console.log(error);
                     props.showError("Some error ocurred");
                 });
         } else {
@@ -96,11 +98,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
     }
     const redirectToHome = () => {
         props.updateTitle('Home')
-        props.history.push('/home');
+        navigate('/home');
     }
     const redirectToLogin = () => {
         props.updateTitle('Login')
-        props.history.push('/login');
+        navigate('/login');
     }
     const handleNextClickOne = (e) => {
         e.preventDefault();
@@ -129,7 +131,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
             return;
         }
         sendDetailsToServer()
-       
+
 
     }
 
@@ -473,7 +475,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
                                 value={state.gen}
                                 onChange={handleChange}
                             />
-                             
+
                             {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
                         </div>
 
@@ -538,4 +540,4 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
     )
 }
 
-export default withRouter(RegistrationForm);
+export default RegistrationForm;
