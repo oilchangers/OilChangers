@@ -1,0 +1,60 @@
+.location-address-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.phone-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.availability-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.distance-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.direction-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.button-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.available-text {
+  color: #05b105;
+}
+
+.busy-text {
+  color: #ff0000;
+}
+
+.store-details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.location-details-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.service-description {
+  text-transform: uppercase;
+  text-align: left;
+}
