@@ -6,17 +6,16 @@ const SearchBox = forwardRef((props, ref) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     return (
-        <div ref={ref} {...props}>
+        <div>
             <div className="flex items-center gap-2 border border-gray-300 rounded-md p-2">
                 <div className="pl-2 flex items-center justify-center">
                     <MagnifyingGlassIcon color="#808080" width="1.25rem" height="1.25rem" />
                 </div>
                 <input
+                    ref={ref}
                     type="search"
-                    placeholder="Enter city or zip code"
-                    className="w-full outline-none py-1 pl-[0.25rem] pr-0 rounded-r-md"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={`w-full outline-none py-1 pl-[0.25rem] pr-0 rounded-r-md ${props.className}`}
+                    {...props}
                 />
                 {searchQuery && (
                     <div className="pr-2 flex items-center justify-center">

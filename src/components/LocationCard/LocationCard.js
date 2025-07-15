@@ -3,7 +3,6 @@ import PhoneIcon from '../Icons/PhoneIcon';
 import LocationPinIcon from '../Icons/LocationPinIcon';
 import DirectionIcon from '../Icons/DirectionIcon';
 import ClockIcon from '../Icons/ClockIcon';
-import SearchBox from '../SearchBox/SearchBox';
 import ButtonLink from '../ButtonLink/ButtonLink';
 
 const LocationCard = forwardRef((props, ref) => {
@@ -23,7 +22,7 @@ const LocationCard = forwardRef((props, ref) => {
 
                     <div className="flex items-center gap-1.5">
                         <PhoneIcon />
-                        <div>{props.phone}</div>
+                        <div>{props.phone ?? 'N/A'}</div>
                     </div>
 
                     <div className="flex items-center gap-1.5">
@@ -49,8 +48,6 @@ const LocationCard = forwardRef((props, ref) => {
                     Get Directions
                 </ButtonLink>
             </div>
-
-            <SearchBox />
         </div>
     );
 });
