@@ -1,6 +1,7 @@
 :root {
   --color-primary: #fcca46;
   --color-text: #ffffff;
+  --font-size: 12px;
 }
 
 .App {
@@ -60,14 +61,14 @@ button.btn.btn-primary.btn-submit {
   display: flex;
 }
 
-.btn-primary{
+/* .btn-primary{
   background-color: grey !important;
   border: none !important;
 }
 
 .btn-primary:hover{
   background-color: #007bff!important
-}
+} */
 
 .Update_Button{
   outline: none !important;

@@ -12,6 +12,8 @@ import {
   Route
 } from "react-router-dom";
 import AlertComponent from './components/AlertComponent/AlertComponent';
+import LocationFinder from './components/LocationFinder/LocationFinder';
+
 function App() {
   const [title, updateTitle] = useState(null);
   const [errorMessage, updateErrorMessage] = useState(null);
@@ -26,6 +28,7 @@ function App() {
             <Route path="/login" element={<LoginForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
             <Route path="/UpdateProfileForm" element={<UpdateProfileForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
             <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+            <Route path="/locations" element={<LocationFinder />} />
           </Routes>
           <AlertComponent errorMessage={errorMessage} hideError={updateErrorMessage} />
         </div>
