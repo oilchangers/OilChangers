@@ -1,4 +1,4 @@
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, InfoWindow, OverlayView } from '@react-google-maps/api';
 import { useState, useEffect, useCallback } from 'react';
 import LocationCard from '../LocationCard/LocationCard';
 import ReactDOM from 'react-dom/server';
@@ -169,12 +169,31 @@ const lightGrayStyle = [
     }
 ];
 
+const CustomDivMarker = ({ position, children }) => {
+    return (
+        <OverlayView
+            position={position}
+            mapPaneName={OverlayView.OVERLAY_LAYER}
+        >
+            <div className="absolute pointer-events-none -translate-x-1/2 -translate-y-full transform">
+                {children}
+            </div>
+        </OverlayView>
+    );
+};
+
 
 const Map = (props) => {
     const [locations, setLocations] = useState(props.stores);
-    const [center, setCenter] = useState(props.center);
+    const DEFAULT_LOCATION = {
+        "lat": 39.8283,
+        "lng": -98.5795
+    };
+    const [center, setCenter] = useState(DEFAULT_LOCATION);
     const [markers, setMarkers] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const [zoom, setZoom] = useState(4);
+    const [computingUserLocationCoordinates, setComputingUserLocationCoordinates] = useState(false);
 
     const legendHTML = `
     <div style="display: flex; gap: 12px; padding: 8px 1rem; background: white; box-shadow: 2px 2px 8px -2px rgba(0,0,0,0.2); font-family: sans-serif; font-size: 12px; margin: 24px;">
@@ -208,15 +227,58 @@ const Map = (props) => {
             map._legendInjected = true;
         }
 
-        // const coordinates = await fetchCoordinates();
-        // setLocationCoordinates(coordinates);
-    }, []);
+        setComputingUserLocationCoordinates(true);
+        getCoordinatesFromAddress(props.selectedUserLocation).then((coordinates) => {
+            if (coordinates) {
+                setCenter(coordinates);
+            }
+        }).finally(() => {
+            setComputingUserLocationCoordinates(false);
+        })
+
+    }, [legendHTML, props.selectedUserLocation]);
+
 
     useEffect(() => {
         if (props.stores) {
             setLocations(props.stores);
         }
     }, [props.stores]);
+
+    useEffect(() => {
+        setComputingUserLocationCoordinates(true);
+        getCoordinatesFromAddress(props.selectedUserLocation)
+            .then((coordinates) => {
+                if (coordinates) {
+                    setCenter(coordinates);
+                    setZoom(11);
+                }
+            }).finally(() => {
+                setComputingUserLocationCoordinates(false);
+            });
+    }, [props.selectedUserLocation]);
+
+
+    function getCoordinatesFromAddress(address) {
+        // Check if Google Maps is loaded
+        if (typeof window.google === 'undefined' || typeof window.google.maps?.Geocoder !== 'function' || !address) {
+            return Promise.resolve(null);
+        }
+
+        const geocoder = new window.google.maps.Geocoder();
+
+        return new Promise((resolve) => {
+            geocoder.geocode({ address }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                    resolve(results[0].geometry.location);
+                }
+                else {
+                    resolve(null);
+                }
+            });
+        });
+    }
+
 
     useEffect(() => {
         if (locations) {
@@ -254,12 +316,16 @@ const Map = (props) => {
         }
     }, [locations]);
 
+    const isDefaultLocation = (location) => {
+        return location.lat === DEFAULT_LOCATION.lat && location.lng === DEFAULT_LOCATION.lng;
+    }
+
     return (
         <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} >
             <GoogleMap
                 mapContainerStyle={containerStyle}
                 center={center}
-                zoom={12}
+                zoom={zoom}
                 options={{
                     styles: lightGrayStyle,
                     mapTypeControl: false,
@@ -268,20 +334,41 @@ const Map = (props) => {
                         position: 23
                     },
                     gestureHandling: props.isFetchingStores ? "none" : "auto",
-                    zoomControl: !props.isFetchingStores,
-                    draggable: !props.isFetchingStores
+                    zoomControl: false,
+                    draggable: !props.isFetchingStores,
+                    cameraControlOptions: {
+                        position: window.google.maps.ControlPosition.RIGHT_TOP
+                    }
                 }}
                 onLoad={onLoad}
             >
-                {/* <Marker /> */}
+                {/* Display the markers for the stores */}
                 {markers}
+
+                {/* Display the info window for the selected location */}
                 {!!selectedLocation &&
                     <InfoWindow
                         position={{ lat: selectedLocation.coordinates.latitude, lng: selectedLocation.coordinates.longitude }}
                         onCloseClick={() => setSelectedLocation(null)}
                     >
                         <LocationCard {...selectedLocation} className="py-2 px-1 text-[11px]" />
-                    </InfoWindow>}
+                    </InfoWindow>
+                }
+
+                {/* Display the user location pin */}
+                {(center && !isDefaultLocation(center)) &&
+                    < CustomDivMarker
+                        position={center}
+                    >
+                        <div style={{ height: "20px", width: "20px", borderRadius: "50%", backgroundColor: "#008000", opacity: 0.5 }}>
+                        </div>
+                    </CustomDivMarker>
+                }
+
+                {/* Display an overlay when fetching stores or computing the user location coordinates */}
+                {(props.isFetchingStores || computingUserLocationCoordinates) &&
+                    <div className="absolute inset-0 z-10 bg-black/60 pointer-events-none animate-fade-in" />
+                }
             </GoogleMap>
         </LoadScript >
     );

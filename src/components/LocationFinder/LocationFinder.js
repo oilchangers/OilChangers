@@ -9,19 +9,25 @@ import Map from '../Map/Map';
 
 const LocationFinder = () => {
     const [stores, setStores] = useState([]);
-    const [query, setQuery] = useState('');
+    const [cityOrZipCode, setCityOrZipCode] = useState('');
     const [isFetchingStores, setIsFetchingStores] = useState(false);
     const [selectedLocationTypes, setSelectedLocationTypes] = useState([]);
     const [locationTypesQueryParamsString, setLocationTypesQueryParamsString] = useState([]);
+    const [canAccessCurrentUserLocation, setCanAccessCurrentUserLocation] = useState(false);
     const [search, setSearch] = useState(false);
-    const [mapCenter, setMapCenter] = useState({
-        lat: 37.758690,
-        lng: -122.4004873
-    });
+    const [selectedUserLocation, setSelectedUserLocation] = useState('');
+    const [isCurrentLocationSelectionVisible, setIsCurrentLocationSelectionVisible] = useState(true);
+    const [hasUserRequestedCurrentLocation, setHasUserRequestedCurrentLocation] = useState(false);
+    const [isUsingDefaultLocation, setIsUsingDefaultLocation] = useState(true);
 
-    const handleSearch = async (query) => {
+    const handleSearch = async (cityOrZipCode) => {
+        if (!cityOrZipCode) {
+            return;
+        }
+
         setIsFetchingStores(true);
-        let url = `${STORE_API_BASE_URL}stores?cityOrZipCode=${query}${locationTypesQueryParamsString}`;
+
+        let url = `${STORE_API_BASE_URL}stores?cityOrZipCode=${cityOrZipCode}${locationTypesQueryParamsString}`;
 
         await axios.get(url, {
             headers: {
@@ -33,72 +39,10 @@ const LocationFinder = () => {
             }
         }).catch(() => {
         }).finally(() => {
+            setSelectedUserLocation(cityOrZipCode);
             setIsFetchingStores(false);
         });
     };
-
-    // useEffect(() => {
-    //     if (stores.length === 0) {
-    //         return;
-    //     }
-
-    //     for (let store of stores) {
-    //         getDrivingDistance("Oakland", store.addressLine1);
-    //     }
-    // }, [search, query, stores])
-
-
-    async function getDrivingDistance(origin, destination) {
-        const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-        const url = "https://routes.googleapis.com/directions/v2:computeRoutes";
-
-        const body = {
-            origin: {
-                address: origin // e.g., "Oakland, CA"
-            },
-            destination: {
-                address: destination // e.g., "San Francisco, CA"
-            },
-            travelMode: "DRIVE",
-            computeAlternativeRoutes: false,
-            languageCode: "en-US",
-            units: "METRIC"
-        };
-
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Goog-Api-Key": apiKey,
-                "X-Goog-FieldMask": "routes.duration,routes.distanceMeters"
-            },
-            body: JSON.stringify(body)
-        });
-
-        const data = await response.json();
-        const route = data.routes?.[0];
-
-        if (route) {
-            const distanceKm = (route.distanceMeters / 1000).toFixed(2);
-            const duration = route.duration.replace("s", " seconds");
-
-            console.log(`Distance: ${distanceKm} km`);
-            console.log(`Duration: ${duration}`);
-        } else {
-            console.error("No route found", data);
-        }
-    }
-
-    // const updateCenter = (place) => {
-    //     geocoder.geocode({ address: place }, (results, status) => {
-    //         if (status === "OK") {
-    //             setMapCenter(results[0].geometry.location);
-    //         } else {
-    //             console.error("Geocode was not successful: " + status);
-    //         }
-    //     });
-    // }
-
 
     const handleGetStoresByLocationType = (event, locationType) => {
         const locationTypes = [...selectedLocationTypes];
@@ -119,9 +63,10 @@ const LocationFinder = () => {
         setLocationTypesQueryParamsString(locationTypesQueryParamsString);
 
         let url = '';
-        if (query) {
-            url = `${STORE_API_BASE_URL}stores?cityOrZipCode=${query}${locationTypesQueryParamsString}`;
-        } else {
+        if (cityOrZipCode) {
+            url = `${STORE_API_BASE_URL}stores?cityOrZipCode=${cityOrZipCode}${locationTypesQueryParamsString}`;
+        }
+        else {
             url = `${STORE_API_BASE_URL}stores${locationTypesQueryParamsString}`;
         }
 
@@ -144,19 +89,31 @@ const LocationFinder = () => {
         });
     }
 
-    // useEffect(() => {
-    //     navigator.geolocation.getCurrentPosition(
-    //         (position) => {
-    //         if (position.coords.latitude && position.coords.longitude) {
-    //             setMapCenter({
-    //                 lat: position.coords.latitude,
-    //                 lng: position.coords.longitude
-    //             });
-    //         }
-    //         el
-    //     }, 
-    //     (error));
-    // }, []);
+    useEffect(() => {
+        getCurrentUserLocation();
+    }, []);
+
+    const getCurrentUserLocation = () => {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                if (position.coords.latitude && position.coords.longitude) {
+                    setSelectedUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                    setCanAccessCurrentUserLocation(true);
+                }
+                else {
+                    setCanAccessCurrentUserLocation(false);
+                }
+            },
+            (error) => {
+                setCanAccessCurrentUserLocation(false);
+                if (hasUserRequestedCurrentLocation) {
+                    setIsCurrentLocationSelectionVisible(false);
+                }
+            });
+    }
 
     return (
         <div className="flex w-[100vw] h-[100vh]" >
@@ -166,22 +123,32 @@ const LocationFinder = () => {
                         <h1 className="text-center text-4xl uppercase font-bold">Find an Oil Changers</h1>
                         <div className="flex flex-col gap-2 px-5">
                             <SearchBox
-                                onChange={(e) => setQuery(e.target.value)}
-                                value={query}
+                                onChange={(e) => setCityOrZipCode(e.target.value)}
+                                value={cityOrZipCode}
                                 placeholder="Enter city or zip code"
 
                             />
                             <Button onClick={() => {
-                                handleSearch(query);
+                                handleSearch(cityOrZipCode);
                                 setSearch(true);
                             }}>Find locations</Button>
                         </div>
 
 
-                        <div className="flex items-center gap-2 px-5">
-                            <MyLocationIcon width="1rem" height="1rem" />
-                            <div className="underline cursor-pointer">Use my current location</div>
-                        </div>
+                        {isCurrentLocationSelectionVisible &&
+                            <div className="flex items-center gap-2 px-5">
+                                <MyLocationIcon width="1rem" height="1rem" />
+                                <div
+                                    className="underline cursor-pointer"
+                                    onClick={() => {
+                                        getCurrentUserLocation();
+                                        setHasUserRequestedCurrentLocation(true);
+                                        setCityOrZipCode(null);
+                                    }}
+                                >
+                                    Use my current location
+                                </div>
+                            </div>}
                     </div>
 
                     <div>
@@ -215,7 +182,6 @@ const LocationFinder = () => {
                     </div>
                 </div>
 
-
                 {isFetchingStores ?
                     <div className="text-left px-3 mt-3">Loading...</div> :
                     stores.length > 0 ?
@@ -229,13 +195,17 @@ const LocationFinder = () => {
                                 </div>
                             ))}
                         </div> :
-                        <div className="text-left text-sm mt-3 text-gray-500 px-3">
-                            No locations found within 50 miles of your location
-                        </div>
+                        !cityOrZipCode && !canAccessCurrentUserLocation ?
+                            <div className="text-left text-sm mt-3 text-gray-500 px-3">
+                                We cannot find your current location. Please search for a location above.
+                            </div> :
+                            <div className="text-left text-sm mt-3 text-gray-500 px-3">
+                                No locations found within 50 miles of your location
+                            </div>
                 }
             </div>
 
-            <Map center={mapCenter} stores={stores} isFetchingStores={isFetchingStores} />
+            <Map selectedUserLocation={selectedUserLocation} stores={stores} isFetchingStores={isFetchingStores} />
         </div >
     );
 
