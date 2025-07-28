@@ -1,7 +1,6 @@
 import { GoogleMap, LoadScript, Marker, InfoWindow, OverlayView } from '@react-google-maps/api';
 import { useState, useEffect, useCallback } from 'react';
 import LocationCard from '../LocationCard/LocationCard';
-import ReactDOM from 'react-dom/server';
 
 const containerStyle = {
     width: '100%',
@@ -337,8 +336,10 @@ const Map = (props) => {
                     zoomControl: false,
                     draggable: !props.isFetchingStores,
                     cameraControlOptions: {
-                        position: window.google.maps.ControlPosition.RIGHT_TOP
-                    }
+                        position: 20
+                    },
+                    streetViewControl: false,
+                    keyboardShortcuts: false
                 }}
                 onLoad={onLoad}
             >
