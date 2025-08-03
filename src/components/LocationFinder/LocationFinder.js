@@ -120,18 +120,20 @@ const LocationFinder = () => {
                 <div className="flex flex-col gap-5">
                     <div className="flex flex-col gap-2">
                         <h1 className="text-center text-4xl uppercase font-bold">Find an Oil Changers</h1>
-                        <div className="flex flex-col gap-2 px-5">
+                        <form className="flex flex-col gap-2 px-5" onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSearch(cityOrZipCode);
+                            setSearch(true);
+                        }}>
                             <SearchBox
                                 onChange={(e) => setCityOrZipCode(e.target.value)}
                                 value={cityOrZipCode}
                                 placeholder="Enter city or zip code"
-
                             />
-                            <Button onClick={() => {
-                                handleSearch(cityOrZipCode);
-                                setSearch(true);
-                            }}>Find locations</Button>
-                        </div>
+                            <Button type="submit">
+                                Find locations
+                            </Button>
+                        </form>
 
 
                         {isCurrentLocationSelectionVisible &&
