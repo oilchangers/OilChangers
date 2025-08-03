@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import LocationCard from '../LocationCard/LocationCard';
 import Button from '../Button/Button';
 import MyLocationIcon from '../Icons/MyLocationIcon';
-import { STORE_API_BASE_URL } from '../../constants/apiConstants';
+import { STORE_API_BASE_URL, STORE_API_KEY } from '../../constants/apiConstants';
 import Map from '../Map/Map';
 
 const LocationFinder = () => {
@@ -18,7 +18,6 @@ const LocationFinder = () => {
     const [selectedUserLocation, setSelectedUserLocation] = useState('');
     const [isCurrentLocationSelectionVisible, setIsCurrentLocationSelectionVisible] = useState(true);
     const [hasUserRequestedCurrentLocation, setHasUserRequestedCurrentLocation] = useState(false);
-    const [isUsingDefaultLocation, setIsUsingDefaultLocation] = useState(true);
 
     const handleSearch = async (cityOrZipCode) => {
         if (!cityOrZipCode) {
@@ -31,7 +30,7 @@ const LocationFinder = () => {
 
         await axios.get(url, {
             headers: {
-                'x-api-key': ''
+                'x-api-key': STORE_API_KEY
             }
         }).then(response => {
             if (response.status === 200) {
@@ -77,7 +76,7 @@ const LocationFinder = () => {
         setIsFetchingStores(true);
         await axios.get(url, {
             headers: {
-                'x-api-key': ''
+                'x-api-key': STORE_API_KEY
             }
         }).then(response => {
             if (response.status === 200) {
