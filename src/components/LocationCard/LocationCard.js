@@ -6,6 +6,31 @@ import ClockIcon from '../Icons/ClockIcon';
 import ButtonLink from '../ButtonLink/ButtonLink';
 
 const LocationCard = forwardRef((props, ref) => {
+    const getAvailabilityColor = (availability) => {
+        switch (availability) {
+            case 'OpenBay':
+                return 'text-green-600';
+            case 'LittleToNoWait':
+                return 'text-yellow-400';
+            case 'ModerateWait':
+                return 'text-orange-400';
+            case 'Busy':
+                return 'text-red-500';
+            default:
+                return 'text-gray-500';
+        }
+    };
+
+    const getAvailabilityText = (availability) => {
+        if (!availability) return '';
+
+        // Insert a space before each capital letter (except the first one)
+        const spaced = availability.replace(/([A-Z])/g, ' $1').trim();
+
+        // Lowercase the whole string and capitalize the first letter
+        return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
+    }
+
     return (
         <div ref={ref} className={`flex flex-col gap-4 ${props?.className}`}>
             <div>
@@ -27,7 +52,9 @@ const LocationCard = forwardRef((props, ref) => {
 
                     <div className="flex items-center gap-1.5">
                         <ClockIcon />
-                        <div className={`${props.availability === 'Available Now' ? 'text-green-600' : props.availability === 'Short Wait Time' ? 'text-orange-400' : 'text-red-600'} font-bold`}>{props.availability}</div>
+                        <div className={`${getAvailabilityColor(props.availabilityStatus)} capitalize font-bold`}>
+                            {getAvailabilityText(props.availabilityStatus)}
+                        </div>
                     </div>
                 </div>
 
