@@ -4,14 +4,16 @@ import LocationPinIcon from '../Icons/LocationPinIcon';
 import DirectionIcon from '../Icons/DirectionIcon';
 import ClockIcon from '../Icons/ClockIcon';
 import ButtonLink from '../ButtonLink/ButtonLink';
+import InfoIcon from '../Icons/InfoIcon';
+import Tooltip from '../Tooltip/Tooltip';
 
 const LocationCard = forwardRef((props, ref) => {
     const getAvailabilityColor = (availability) => {
         switch (availability) {
-            case 'OpenBay':
+            case 'Available':
                 return 'text-green-600';
             case 'LittleToNoWait':
-                return 'text-yellow-400';
+                return 'text-[#f2c31a]';
             case 'ModerateWait':
                 return 'text-orange-400';
             case 'Busy':
@@ -52,9 +54,31 @@ const LocationCard = forwardRef((props, ref) => {
 
                     <div className="flex items-center gap-1.5">
                         <ClockIcon />
-                        <div className={`${getAvailabilityColor(props.availabilityStatus)} capitalize font-bold`}>
-                            {getAvailabilityText(props.availabilityStatus)}
+                        <div className={`${getAvailabilityColor(props.waitTime.availabilityStatus)} capitalize font-bold`}>
+                            {getAvailabilityText(props.waitTime.availabilityStatus)}
                         </div>
+
+                        {(props.waitTime.availabilityStatus !== 'Available' && props.waitTime.availabilityStatus !== 'Indeterminate') &&
+                            props.waitTime.minWaitTimeMinutes === 0 ?
+                            <Tooltip title={`Up to ${props.waitTime.maxWaitTimeMinutes} minutes`}>
+                                <div>
+                                    <InfoIcon />
+                                </div>
+                            </Tooltip>
+                            :
+                            props.waitTime.minWaitTimeMinutes > 30 ?
+                                <Tooltip title={`More than ${props.waitTime.minWaitTimeMinutes - 1} minutes`}>
+                                    <div>
+                                        <InfoIcon />
+                                    </div>
+                                </Tooltip>
+                                :
+                                <Tooltip title={`${props.waitTime.minWaitTimeMinutes} to ${props.waitTime.maxWaitTimeMinutes} minutes`}>
+                                    <div>
+                                        <InfoIcon />
+                                    </div>
+                                </Tooltip>}
+
                     </div>
                 </div>
 
@@ -78,7 +102,7 @@ const LocationCard = forwardRef((props, ref) => {
                     Get Directions
                 </ButtonLink>
             </div>
-        </div>
+        </div >
     );
 });
 
