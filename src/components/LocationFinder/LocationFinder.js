@@ -147,8 +147,8 @@ const LocationFinder = () => {
     }
 
     return (
-        <div className="flex w-[100vw] h-[100vh] ">
-            {/* <div className="flex-[3] flex w-[100%] min-h-[75vh]"> */}
+        <div className="flex flex-col w-[100vw] h-[100vh]">
+            <div className="flex-[3] flex w-[100%] min-h-[75vh]">
             <div className="flex flex-col shadow-black shadow-md w-[20%]">
                 <div className="flex flex-col">
                     <div className="flex flex-col gap-2">
@@ -240,9 +240,9 @@ const LocationFinder = () => {
             </div>
 
             <Map selectedUserLocation={selectedUserLocation} stores={stores} isFetchingStores={isFetchingStores} />
-            {/* </div> */}
+            </div>
 
-            {/* <LocationsByStateFooter className="flex-[1] border-solid border border-red-400" /> */}
+            <LocationsByStateFooter className="flex-[1] border-solid border border-red-400" />
         </div>
     );
 
