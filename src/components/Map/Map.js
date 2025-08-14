@@ -185,11 +185,7 @@ const CustomDivMarker = ({ position, children }) => {
 
 const Map = (props) => {
     const [locations, setLocations] = useState(props.stores);
-    const DEFAULT_LOCATION = {
-        "lat": 39.8283,
-        "lng": -98.5795
-    };
-    const [center, setCenter] = useState(DEFAULT_LOCATION);
+    const [center, setCenter] = useState(DEFAULT_MAP_CENTER);
     const [markers, setMarkers] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [zoom, setZoom] = useState(4);
@@ -317,7 +313,7 @@ const Map = (props) => {
     }, [locations]);
 
     const isDefaultLocation = (location) => {
-        return location.lat === DEFAULT_LOCATION.lat && location.lng === DEFAULT_LOCATION.lng;
+        return location.lat === DEFAULT_MAP_CENTER.lat && location.lng === DEFAULT_MAP_CENTER.lng;
     }
 
     return (
