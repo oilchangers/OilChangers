@@ -1,7 +1,7 @@
-import { GoogleMap, LoadScript, Marker, InfoWindow, OverlayView } from '@react-google-maps/api';
-import { useState, useEffect, useCallback } from 'react';
-import SummarizedLocationCard from '../SummarizedLocationCard/SummarizedLocationCard';
-import { DEFAULT_MAP_CENTER } from '../../utils/constants';
+import { GoogleMap, LoadScript, InfoWindow, OverlayView, Marker } from '@react-google-maps/api';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import LocationCard from '../SummarizedLocationCard/SummarizedLocationCard';
+import { GOOGLE_MAPS_API_KEY } from '../../constants/apiConstants';
 
 const containerStyle = {
     width: '100%',
@@ -169,29 +169,7 @@ const lightGrayStyle = [
     }
 ];
 
-const CustomDivMarker = ({ position, children }) => {
-    return (
-        <OverlayView
-            position={position}
-            mapPaneName={OverlayView.OVERLAY_LAYER}
-        >
-            <div className="absolute pointer-events-none -translate-x-1/2 -translate-y-full transform">
-                {children}
-            </div>
-        </OverlayView>
-    );
-};
-
-
-const Map = (props) => {
-    const [locations, setLocations] = useState(props.stores);
-    const [center, setCenter] = useState(DEFAULT_MAP_CENTER);
-    const [markers, setMarkers] = useState([]);
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const [zoom, setZoom] = useState(4);
-    const [computingUserLocationCoordinates, setComputingUserLocationCoordinates] = useState(false);
-
-    const legendHTML = `
+const legendHTML = `
     <div style="display: flex; gap: 12px; padding: 8px 1rem; background: white; box-shadow: 2px 2px 8px -2px rgba(0,0,0,0.2); font-family: sans-serif; font-size: 12px; margin: 24px;">
         <div style="display: flex; gap: 6px; align-items: center;">
             <img src="../../images/location_pin_yellow.png" alt="Oil Changers" width="12" />
@@ -215,84 +193,58 @@ const Map = (props) => {
     </div>
     `;
 
+const CustomDivMarker = ({ position, children }) => {
+    return (
+        <OverlayView
+            position={position}
+            mapPaneName={OverlayView.OVERLAY_LAYER}
+        >
+            <div className="absolute pointer-events-none -translate-x-1/2 -translate-y-full transform">
+                {children}
+            </div>
+        </OverlayView>
+    );
+};
+
+const GenericMap = ({ locations, center, showLegend = false, canBeInteractedWith = true, showCenterMarker = true }) => {
+    const containerStyle = {
+        width: '100%',
+        height: '100%'
+    };
+
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [markers, setMarkers] = useState([]);
+    const [zoom, setZoom] = useState(12);
+    const legendRef = useRef(null);
+
     const onLoad = useCallback(async (map) => {
-        if (!map._legendInjected) {
-            const legendDiv = document.createElement("div");
-            legendDiv.innerHTML = legendHTML;
-            map.controls[window.google.maps.ControlPosition.LEFT_TOP].push(legendDiv);
-            map._legendInjected = true;
-        }
+        // if (!map._legendInjected) {
+        //     const legendDiv = document.createElement("div");
+        //     legendDiv.innerHTML = legendHTML;
+        //     map.controls[window.google.maps.ControlPosition.LEFT_TOP].push(legendDiv);
+        //     map._legendInjected = true;
 
-        setComputingUserLocationCoordinates(true);
-        getCoordinatesFromAddress(props.selectedUserLocation).then((coordinates) => {
-            if (coordinates) {
-                setCenter(coordinates);
-            }
-        }).finally(() => {
-            setComputingUserLocationCoordinates(false);
-        })
+        // }
 
-    }, [legendHTML, props.selectedUserLocation]);
-
+    }, [legendHTML]);
 
     useEffect(() => {
-        if (props.stores) {
-            setLocations(props.stores);
-        }
-    }, [props.stores]);
-
-    useEffect(() => {
-        setComputingUserLocationCoordinates(true);
-        getCoordinatesFromAddress(props.selectedUserLocation)
-            .then((coordinates) => {
-                if (coordinates) {
-                    setCenter(coordinates);
-                    setZoom(11);
-                }
-            }).finally(() => {
-                setComputingUserLocationCoordinates(false);
-            });
-    }, [props.selectedUserLocation]);
-
-
-    function getCoordinatesFromAddress(address) {
-        // Check if Google Maps is loaded
-        if (typeof window.google === 'undefined' || typeof window.google.maps?.Geocoder !== 'function' || !address) {
-            return Promise.resolve(null);
-        }
-
-        const geocoder = new window.google.maps.Geocoder();
-
-        return new Promise((resolve) => {
-            geocoder.geocode({ address }, (results, status) => {
-                if (status === "OK" && results[0]) {
-                    resolve(results[0].geometry.location);
-                }
-                else {
-                    resolve(null);
-                }
-            });
-        });
-    }
-
-
-    useEffect(() => {
-        if (locations) {
+        if (locations && locations.length > 0) {
             setMarkers(locations.map((location) => {
-                let markerColor = "../images/location_pin_yellow.png";
+                let markerIcon = "/images/location_pin_yellow.png";
 
                 switch (location.locationType) {
                     case "Oil Changers":
-                        markerColor = "../images/location_pin_yellow.png";
+                        markerIcon = "/images/location_pin_yellow.png";
                         break;
                     case "Oil Changer + Repair":
-                        markerColor = "../images/location_pin_red.png";
+                        markerIcon = "/images/location_pin_red.png";
                         break;
                     case "Oil Changers & Car Wash":
-                        markerColor = "../images/location_pin_grey.png";
+                        markerIcon = "/images/location_pin_grey.png";
                         break;
                     case "Coming Soon":
-                        markerColor = "../images/location_pin_black.png";
+                        markerIcon = "/images/location_pin_black.png";
                         break;
                     default:
                         // Keep the default yellow dot
@@ -305,19 +257,17 @@ const Map = (props) => {
                         lat: location.coordinates.latitude,
                         lng: location.coordinates.longitude
                     }}
-                    icon={{ url: markerColor }}
+                    icon={{
+                        url: markerIcon
+                    }}
                     onClick={() => setSelectedLocation(location)}
                 />
             }));
         }
     }, [locations]);
 
-    const isDefaultLocation = (location) => {
-        return location.lat === DEFAULT_MAP_CENTER.lat && location.lng === DEFAULT_MAP_CENTER.lng;
-    }
-
     return (
-        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} >
+        <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} >
             <GoogleMap
                 mapContainerStyle={containerStyle}
                 center={center}
@@ -329,9 +279,9 @@ const Map = (props) => {
                     zoomControlOptions: {
                         position: 23
                     },
-                    gestureHandling: props.isFetchingStores ? "none" : "auto",
+                    gestureHandling: canBeInteractedWith ? "auto" : "none",
                     zoomControl: false,
-                    draggable: !props.isFetchingStores,
+                    draggable: canBeInteractedWith,
                     cameraControlOptions: {
                         position: 20
                     },
@@ -349,12 +299,12 @@ const Map = (props) => {
                         position={{ lat: selectedLocation.coordinates.latitude, lng: selectedLocation.coordinates.longitude }}
                         onCloseClick={() => setSelectedLocation(null)}
                     >
-                        <SummarizedLocationCard {...selectedLocation} className="py-2 px-1 text-[11px]" />
+                        <LocationCard {...selectedLocation} className="py-2 px-1 text-[11px]" />
                     </InfoWindow>
                 }
 
                 {/* Display the user location pin */}
-                {(center && !isDefaultLocation(center)) &&
+                {(center && showCenterMarker) &&
                     < CustomDivMarker
                         position={center}
                     >
@@ -364,12 +314,17 @@ const Map = (props) => {
                 }
 
                 {/* Display an overlay when fetching stores or computing the user location coordinates */}
-                {(props.isFetchingStores || computingUserLocationCoordinates) &&
+                {(!canBeInteractedWith) &&
                     <div className="absolute inset-0 z-10 bg-black/60 pointer-events-none animate-fade-in" />
                 }
+
+                {showLegend &&
+                    <div id="legend" ref={legendRef} >
+                        {legendHTML}
+                    </div>}
             </GoogleMap>
         </LoadScript >
     );
-};
+}
 
-export default Map;
+export default GenericMap;

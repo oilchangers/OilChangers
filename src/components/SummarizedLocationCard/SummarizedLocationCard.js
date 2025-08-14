@@ -2,10 +2,11 @@ import React, { forwardRef } from 'react';
 import PhoneIcon from '../Icons/PhoneIcon';
 import LocationPinIcon from '../Icons/LocationPinIcon';
 import DirectionIcon from '../Icons/DirectionIcon';
-import ClockIcon from '../Icons/ClockIcon';
 import ButtonLink from '../ButtonLink/ButtonLink';
+import WaitTime from '../WaitTime/WaitTime';
 
-const LocationCard = forwardRef((props, ref) => {
+const SummarizedLocationCard = forwardRef((props, ref) => {
+
     return (
         <div ref={ref} className={`flex flex-col gap-4 ${props?.className}`}>
             <div>
@@ -24,11 +25,7 @@ const LocationCard = forwardRef((props, ref) => {
                         <PhoneIcon />
                         <div>{props.phoneNumber ?? 'N/A'}</div>
                     </div>
-
-                    <div className="flex items-center gap-1.5">
-                        <ClockIcon />
-                        <div className={`${props.availability === 'Available Now' ? 'text-green-600' : props.availability === 'Short Wait Time' ? 'text-orange-400' : 'text-red-600'} font-bold`}>{props.availability}</div>
-                    </div>
+                    <WaitTime waitTime={props.waitTime} />
                 </div>
 
                 <div className="flex flex-col items-center gap-1">
@@ -51,10 +48,10 @@ const LocationCard = forwardRef((props, ref) => {
                     Get Directions
                 </ButtonLink>
             </div>
-        </div>
+        </div >
     );
 });
 
-LocationCard.displayName = 'LocationCard';
+SummarizedLocationCard.displayName = 'SummarizedLocationCard';
 
-export default LocationCard;
+export default SummarizedLocationCard;
