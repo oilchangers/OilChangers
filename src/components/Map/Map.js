@@ -1,6 +1,7 @@
 import { GoogleMap, LoadScript, Marker, InfoWindow, OverlayView } from '@react-google-maps/api';
 import { useState, useEffect, useCallback } from 'react';
-import LocationCard from '../LocationCard/LocationCard';
+import SummarizedLocationCard from '../SummarizedLocationCard/SummarizedLocationCard';
+import { DEFAULT_MAP_CENTER } from '../../utils/constants';
 
 const containerStyle = {
     width: '100%',
@@ -352,7 +353,7 @@ const Map = (props) => {
                         position={{ lat: selectedLocation.coordinates.latitude, lng: selectedLocation.coordinates.longitude }}
                         onCloseClick={() => setSelectedLocation(null)}
                     >
-                        <LocationCard {...selectedLocation} className="py-2 px-1 text-[11px]" />
+                        <SummarizedLocationCard {...selectedLocation} className="py-2 px-1 text-[11px]" />
                     </InfoWindow>
                 }
 

@@ -1,7 +1,7 @@
 import SearchBox from '../SearchBox/SearchBox';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import LocationCard from '../LocationCard/LocationCard';
+import SummarizedLocationCard from '../SummarizedLocationCard/SummarizedLocationCard';
 import Button from '../Button/Button';
 import MyLocationIcon from '../Icons/MyLocationIcon';
 import { STORE_API_BASE_URL, STORE_API_KEY } from '../../constants/apiConstants';
@@ -223,7 +223,7 @@ const LocationFinder = () => {
                             {stores.map((store) => (
                                 <div key={store.id}>
                                     <div className="m-3 px-4">
-                                        <LocationCard {...store} className="px-3" />
+                                            <SummarizedLocationCard {...store} className="px-3" />
                                     </div>
                                     <div className="border-t border-gray-400 mt-3" />
                                 </div>
