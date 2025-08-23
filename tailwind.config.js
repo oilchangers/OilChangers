@@ -12,8 +12,10 @@ module.exports = {
         'text': ['var(--font-text)'],
         'headline': ['var(--font-headline)'],
       },
+      colors: {
+        'primary': '#fcca46',
+      },
     },
   },
   plugins: [],
 }
-

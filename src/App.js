@@ -12,7 +12,7 @@ import {
   Route
 } from "react-router-dom";
 import AlertComponent from './components/AlertComponent/AlertComponent';
-import LocationFinder from './components/LocationFinder/LocationFinder';
+import LocationFinder from './pages/LocationFinder';
 import CitiesByState from './components/CitiesByState/CitiesByState';
 import StoresByCity from './components/StoresByCity/StoresByCity';
 import StoreDetails from './pages/StoreDetails';
