@@ -30,39 +30,48 @@ const WaitTime = (props) => {
 
     return (
         <div className="flex items-center gap-1.5">
-            <ClockIcon />
+            <ClockIcon height="0.625rem" width="0.625rem" />
             <div className={`${getAvailabilityColor(props.waitTime.availabilityStatus)} capitalize font-bold`}>
                 {getAvailabilityText(props.waitTime.availabilityStatus)}
             </div>
             {props.waitTime.availabilityStatus === "Available" &&
                 <Tooltip title="The location has an open bay and is ready to service your vehicle.">
                     <div>
-                        <InfoIcon />
+                        <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                     </div>
                 </Tooltip>
             }
             {props.waitTime.availabilityStatus === "Indeterminate" &&
                 <Tooltip title="The location availability is unknown.">
                     <div>
-                        <InfoIcon />
+                        <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                     </div>
                 </Tooltip>
             }
             {props.waitTime.availabilityStatus === "Busy" &&
-                <Tooltip title={`The location is currently busy. You will need to wait up to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
+                <Tooltip title={`The location is currently busy. You will need to wait at least ${props.waitTime.minWaitTimeMinutes - 1} minutes.`}>
                     <div>
-                        <InfoIcon />
+                        <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                     </div>
                 </Tooltip>
             }
             {props.waitTime.availabilityStatus !== "Available" &&
                 props.waitTime.availabilityStatus !== "Indeterminate" &&
                 props.waitTime.availabilityStatus !== "Busy" &&
-                <Tooltip title={`Wait time is ${props.waitTime.minWaitTimeMinutes} to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
-                    <div>
-                        <InfoIcon />
-                    </div>
-                </Tooltip>
+                <div>
+                    {props.waitTime.minWaitTimeMinutes > 0 ?
+                        <Tooltip title={`Wait time is ${props.waitTime.minWaitTimeMinutes + 1} to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
+                            <div>
+                                <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
+                            </div>
+                        </Tooltip> :
+                        <Tooltip title={`Wait time is up to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
+                            <div>
+                                <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
+                            </div>
+                        </Tooltip>
+                    }
+                </div>
             }
         </div>
     );
