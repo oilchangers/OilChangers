@@ -28,12 +28,16 @@ function Header(props) {
         navigate('/login')
     }
     return (
-        <nav className="navbar navbar-dark bg-primary">
-            <div className="row w-100 d-flex justify-content-center text-white">
-                <div className="col-7 text-right"> <span className="h3">{props.title || title}</span></div>
-                <div className="col-5 text-right">
-                    {renderLogout()}
-                </div>
+        <nav className="navbar navbar-dark bg-white py-3 border-b-[1px] border-solid border-b-gray-300 shadow-[0px_0px_0.5px_0.5px_rgba(0,0,0,0.1)]">
+            <div className="w-100 flex justify-center pl-3 text-gray-600 font-avenir-condensed">
+                <a href="/locations">
+                    <img
+                        src="https://cloudbackend.scdn7.secure.raxcdn.com/img/upload/oilchangers-big2x.png"
+                        height="40"
+                        width="272"
+                        alt="Oil Changers Logo"
+                    />
+                </a>
             </div>
         </nav>
     )
