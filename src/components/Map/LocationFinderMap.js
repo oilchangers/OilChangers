@@ -1,12 +1,13 @@
-import { GoogleMap, LoadScript, Marker, InfoWindow, OverlayView } from '@react-google-maps/api';
-import { useState, useEffect, useCallback } from 'react';
-import SummarizedLocationCard from '../SummarizedLocationCard/SummarizedLocationCard';
+import { GoogleMap, LoadScript, Marker, OverlayView, OverlayViewF } from '@react-google-maps/api';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { DEFAULT_MAP_CENTER } from '../../utils/constants';
+import LocationInfoWindow from '../SummarizedLocationCard/LocationInfoWindow';
 
 const containerStyle = {
     width: '100%',
     height: '100%'
 };
+
 
 const lightGrayStyle = [
     {
@@ -169,53 +170,56 @@ const lightGrayStyle = [
     }
 ];
 
+const legendHTML = `
+<div style="display: flex; gap: 1.5rem; padding: 8px 1rem; background: white; box-shadow: 2px 2px 8px -2px rgba(0,0,0,0.2); font-family: sans-serif; font-size: 12px; margin: 24px;">
+    <div style="display: flex; gap: 6px; align-items: center;">
+        <img src="../../images/location_pin_yellow.png" alt="Oil Changers" width="12" />
+        <span>Oil Changers</span>
+    </div>
+
+    <div style="display: flex; gap: 6px; align-items: center;">
+        <img src="../../images/location_pin_grey.png" alt="OC & Car Wash" width="12" />
+        <span>OC & Car Wash</span>
+    </div>
+
+    <div style="display: flex; gap: 6px; align-items: center;">
+        <img src="../../images/location_pin_red.png" alt="OC + Repair" width="12" />
+        <span>OC + Repair</span>
+    </div>
+
+    <div style="display: flex; gap: 6px; align-items: center;">
+        <img src="../../images/location_pin_black.png" alt="Coming Soon" width="12" />
+        <span>Coming Soon</span>
+    </div>
+</div>
+`;
+
 const CustomDivMarker = ({ position, children }) => {
     return (
-        <OverlayView
+        <OverlayViewF
             position={position}
-            mapPaneName={OverlayView.OVERLAY_LAYER}
+            mapPaneName={OverlayView.MARKER_LAYER}
         >
             <div className="absolute pointer-events-none -translate-x-1/2 -translate-y-full transform">
                 {children}
             </div>
-        </OverlayView>
+        </OverlayViewF>
     );
 };
 
 
-const Map = (props) => {
+const LocationFinderMap = (props) => {
     const [locations, setLocations] = useState(props.stores);
     const [center, setCenter] = useState(DEFAULT_MAP_CENTER);
     const [markers, setMarkers] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [zoom, setZoom] = useState(4);
     const [computingUserLocationCoordinates, setComputingUserLocationCoordinates] = useState(false);
-
-    const legendHTML = `
-    <div style="display: flex; gap: 12px; padding: 8px 1rem; background: white; box-shadow: 2px 2px 8px -2px rgba(0,0,0,0.2); font-family: sans-serif; font-size: 12px; margin: 24px;">
-        <div style="display: flex; gap: 6px; align-items: center;">
-            <img src="../../images/location_pin_yellow.png" alt="Oil Changers" width="12" />
-            <span>Oil Changers</span>
-        </div>
-
-        <div style="display: flex; gap: 6px; align-items: center;">
-            <img src="../../images/location_pin_grey.png" alt="OC & Car Wash" width="12" />
-            <span>OC & Car Wash</span>
-        </div>
-
-        <div style="display: flex; gap: 6px; align-items: center;">
-            <img src="../../images/location_pin_red.png" alt="OC + Repair" width="12" />
-            <span>OC + Repair</span>
-        </div>
-
-        <div style="display: flex; gap: 6px; align-items: center;">
-            <img src="../../images/location_pin_black.png" alt="Coming Soon" width="12" />
-            <span>Coming Soon</span>
-        </div>
-    </div>
-    `;
+    const mapRef = useRef(null);
 
     const onLoad = useCallback(async (map) => {
+        mapRef.current = map;
+
         if (!map._legendInjected) {
             const legendDiv = document.createElement("div");
             legendDiv.innerHTML = legendHTML;
@@ -232,8 +236,7 @@ const Map = (props) => {
             setComputingUserLocationCoordinates(false);
         })
 
-    }, [legendHTML, props.selectedUserLocation]);
-
+    }, [props.selectedUserLocation]);
 
     useEffect(() => {
         if (props.stores) {
@@ -254,7 +257,6 @@ const Map = (props) => {
             });
     }, [props.selectedUserLocation]);
 
-
     function getCoordinatesFromAddress(address) {
         // Check if Google Maps is loaded
         if (typeof window.google === 'undefined' || typeof window.google.maps?.Geocoder !== 'function' || !address) {
@@ -274,7 +276,6 @@ const Map = (props) => {
             });
         });
     }
-
 
     useEffect(() => {
         if (locations) {
@@ -306,7 +307,25 @@ const Map = (props) => {
                         lng: location.coordinates.longitude
                     }}
                     icon={{ url: markerColor }}
-                    onClick={() => setSelectedLocation(location)}
+                    scaledSize={new window.google.maps.Size(40, 51)}
+                    onClick={() => {
+                        setSelectedLocation(location);
+
+                        if (mapRef.current) {
+                            mapRef.current.panTo({
+                                lat: location.coordinates.latitude,
+                                lng: location.coordinates.longitude
+                            })
+                            mapRef.current.panBy(0, -100);
+                        }
+                        else {
+                            // If the map is not loaded fall back to setting the center of the map to the location
+                            setCenter({
+                                lat: location.coordinates.latitude,
+                                lng: location.coordinates.longitude
+                            })
+                        }
+                    }}
                 />
             }));
         }
@@ -319,6 +338,7 @@ const Map = (props) => {
     return (
         <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} >
             <GoogleMap
+                id="map"
                 mapContainerStyle={containerStyle}
                 center={center}
                 zoom={zoom}
@@ -345,22 +365,26 @@ const Map = (props) => {
 
                 {/* Display the info window for the selected location */}
                 {!!selectedLocation &&
-                    <InfoWindow
+                    <OverlayViewF
+                        className="h-fit w-fit p-4"
                         position={{ lat: selectedLocation.coordinates.latitude, lng: selectedLocation.coordinates.longitude }}
-                        onCloseClick={() => setSelectedLocation(null)}
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                     >
-                        <SummarizedLocationCard {...selectedLocation} className="py-2 px-1 text-[11px]" />
-                    </InfoWindow>
+                        <div>
+                            <LocationInfoWindow
+                                onClose={() => setSelectedLocation(null)}
+                                {...selectedLocation}
+                                className="px-1 text-xs pt-0" />
+                        </div>
+
+                    </OverlayViewF>
                 }
 
                 {/* Display the user location pin */}
                 {(center && !isDefaultLocation(center)) &&
                     < CustomDivMarker
                         position={center}
-                    >
-                        <div style={{ height: "20px", width: "20px", borderRadius: "50%", backgroundColor: "#008000", opacity: 0.5 }}>
-                        </div>
-                    </CustomDivMarker>
+                    />
                 }
 
                 {/* Display an overlay when fetching stores or computing the user location coordinates */}
@@ -368,8 +392,8 @@ const Map = (props) => {
                     <div className="absolute inset-0 z-10 bg-black/60 pointer-events-none animate-fade-in" />
                 }
             </GoogleMap>
-        </LoadScript >
+        </LoadScript>
     );
 };
 
-export default Map;
+export default LocationFinderMap;
