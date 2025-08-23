@@ -15,8 +15,7 @@ const ButtonLink = forwardRef(({
 
     const buttonClasses = [
         baseClass,
-        variantClass,
-        className
+        variantClass
     ].filter(Boolean).join(' ');
 
     const handleClick = (event) => {
@@ -29,7 +28,7 @@ const ButtonLink = forwardRef(({
         <a
             ref={ref}
             href={href}
-            className={buttonClasses}
+            className={`${buttonClasses} ${className}`}
             onClick={handleClick}
             {...props}
         >
