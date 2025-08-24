@@ -1,6 +1,20 @@
 import ClipLoader from "react-spinners/ClipLoader";
+import useBreakPoint from "../../utils/hooks/useBreakPointHook";
+import { useEffect, useState } from "react";
 
 const LocationsByStateBrowser = ({ states, isLoading }) => {
+    const [numberOfColumns, setNumberOfColumns] = useState(1);
+    const [numberOfRows, setNumberOfRows] = useState(states.length ?? 0);
+    const breakpoint = useBreakPoint();
+
+    useEffect(() => {
+        let columns;
+        if (breakpoint.xs) {
+            columns = 2;
+            setNumberOfColumns(columns);
+        }
+        setNumberOfRows(Math.ceil(states.length / columns));
+    }, [breakpoint, states, numberOfColumns]);
 
     return (
         <div className="flex flex-col gap-12 py-[100px] px-3 justify-center items-center shadow-[0_-4px_8px_rgba(0,0,0,0.15)]">
@@ -9,7 +23,7 @@ const LocationsByStateBrowser = ({ states, isLoading }) => {
                 <div className="flex justify-center items-center">
                     <ClipLoader color="#fcca46" loading={isLoading} size={100} />
                 </div> :
-                <ul className={`grid grid-cols-1 grid-rows-18 grid-flow-row gap-y-2 w-full px-3 font-avenir-condensed font-semibold`}>
+                <ul className={`grid grid-cols-${numberOfColumns} grid-rows-${numberOfRows} grid-flow-row gap-y-2 w-full px-3 font-avenir-condensed font-semibold`}>
                     {states.map((state) => (
                         <li
                             key={state.code}

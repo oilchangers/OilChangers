@@ -4,7 +4,7 @@ const MapLegend = forwardRef((props, ref) => {
     return (
         <div
             ref={ref}
-            className={`flex gap-6 px-4 py-2 bg-white text-xs font-sans ${props.className}`}
+            className={`flex gap-6 px-4 py-2 bg-white text-xs xs:text-sm font-sans ${props.className}`}
             {...props}
         >
             <div className="flex gap-1.5 items-center">

@@ -183,51 +183,49 @@ const LocationFinder = () => {
             <div className="flex flex-col w-screen h-screen">
                 <div className="flex flex-col w-[100%] min-h-[160vh]">
                     {/* Search */}
-                    <div className="flex-[1] p-[1.5rem] flex flex-col justify-center xs:px-5">
-                        <div className="flex flex-col">
-                            <div className="flex flex-col gap-3">
-                                <h1 className="text-center text-[2rem] uppercase font-bold">Find an Oil Changers</h1>
-                                <form className="flex flex-col gap-2" onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleSearch(cityOrZipCode);
-                                    setSearch(true);
-                                }}>
-                                    <SearchBox
-                                        onChange={(e) => setCityOrZipCode(e.target.value)}
-                                        value={cityOrZipCode}
-                                        placeholder="Enter city or zip code"
-                                        autoComplete="off"
-                                        role="search"
-                                        name="location"
-                                    />
-                                    <Button type="submit">
-                                        Find locations
-                                    </Button>
-                                </form>
-                            </div>
-
-                            {isCurrentLocationSelectionVisible &&
-                                <div className="flex items-center gap-2 pb-3">
-                                    <MyLocationIcon width="1rem" height="1rem" />
-                                    <div
-                                        className="underline cursor-pointer"
-                                        onClick={() => {
-                                            getCurrentUserLocation();
-                                            setHasUserRequestedCurrentLocation(true);
-                                            setCityOrZipCode(null);
-                                        }}
-                                    >
-                                        Use my current location
-                                    </div>
-                                </div>}
+                    <div className="flex-[1] p-6 xs:px-16 flex flex-col justify-center gap-5">
+                        <div className="flex flex-col gap-3">
+                            <h1 className="text-center text-[2rem] uppercase font-bold">Find an Oil Changers</h1>
+                            <form className="flex flex-col gap-2" onSubmit={(e) => {
+                                e.preventDefault();
+                                handleSearch(cityOrZipCode);
+                                setSearch(true);
+                            }}>
+                                <SearchBox
+                                    onChange={(e) => setCityOrZipCode(e.target.value)}
+                                    value={cityOrZipCode}
+                                    placeholder="Enter city or zip code"
+                                    autoComplete="off"
+                                    role="search"
+                                    name="location"
+                                />
+                                <Button type="submit">
+                                    Find locations
+                                </Button>
+                            </form>
                         </div>
+
+                        {true &&
+                            <div className="flex items-center gap-2 text-sm">
+                                <MyLocationIcon width="1rem" height="1rem" />
+                                <div
+                                    className="underline cursor-pointer"
+                                    onClick={() => {
+                                        getCurrentUserLocation();
+                                        setHasUserRequestedCurrentLocation(true);
+                                        setCityOrZipCode(null);
+                                    }}
+                                >
+                                    Use my current location
+                                </div>
+                            </div>}
                     </div>
 
                     {/* Filters */}
                     {true &&
                         <div
-                            className="flex pl-4 xs:justify-center xs:px-5 text-black border-t border-solid py-3 border-gray-400 relative z-10 shadow-[0_3px_2px_-1px_rgba(0,0,0,0.3)]">
-                            <div className="flex flex-col min-w-[90%] gap-2">
+                            className="flex pl-4 xs:pl-0 xs:justify-center xs:px-16 text-black border-t border-solid py-3 border-gray-400 relative z-10 shadow-[0_3px_2px_-1px_rgba(0,0,0,0.3)]">
+                            <div className="flex flex-col min-w-[90%] xs:min-w-[80%] gap-2">
                                 <div className="text-left text-sm font-bold">Filter locations</div>
                                 <div className="flex justify-between gap-5 text-xs">
                                     <div className="flex flex-col">
@@ -309,18 +307,18 @@ const LocationFinder = () => {
                     </div>
 
                     {/* Legend */}
-                    <MapLegend className="text-[0.7rem] leading-[0.9] text-left text-black flex justify-between px-4 py-2 gap-6" />
+                    <MapLegend className="text-[0.7rem] xs:text-sm leading-[0.9] text-left text-black flex justify-between px-4 py-2 gap-6" />
 
                     {/* Results */}
-                    <div className="flex-[5] relative z-10 flex flex-col min-w-[342px] p-0 pt-3 overflow-visible">
+                    <div className="flex-[5] relative z-10 flex flex-col pt-3 overflow-visible">
                         {isFetchingStores ?
-                            <div className="text-left text-black px-4 xs:px-3 mt-3">Loading...</div> :
+                            <div className="text-left text-black px-4 xs:px-5 mt-3">Loading...</div> :
                             stores.length > 0 ?
                                 <div className="flex flex-col overflow-y-scroll">
                                     {stores.map((store) => (
                                         <div key={store.id} className="cursor-pointer hover:bg-gray-100">
-                                            <div className="flex flex-col my-3 px-4  xs:px-20">
-                                                <SummarizedLocationCard {...store} />
+                                            <div className="flex flex-col my-3 px-4">
+                                                <SummarizedLocationCard {...store} className="xs:px-12" />
                                             </div>
                                             <div className="border-t border-gray-400 mt-3" />
                                         </div>
