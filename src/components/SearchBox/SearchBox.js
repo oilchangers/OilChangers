@@ -13,7 +13,7 @@ const SearchBox = forwardRef((props, ref) => {
                 <input
                     ref={ref}
                     type="search"
-                    className={`w-full outline-none py-1 pl-[0.25rem] pr-2 rounded-r-md placeholder:text-black ${props.className}`}
+                    className={`w-full outline-none py-2 pl-[0.25rem] pr-2 rounded-r-md placeholder:text-black ${props.className}`}
                     {...props}
                 />
 

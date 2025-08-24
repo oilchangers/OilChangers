@@ -11,11 +11,11 @@ const SummarizedLocationCard = forwardRef((props, ref) => {
     return (
         <div ref={ref} className={`flex flex-col gap-3 ${props?.className}`}>
             <div>
-                <h1 className="uppercase text-left text-sm">{props.locationName}</h1>
+                <h1 className="uppercase text-left text-lg">{props.locationName}</h1>
                 <div className="text-[0.625rem] text-left text-gray-500 font-text">{props.locationType}</div>
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between text-sm">
                 <div className="flex flex-col gap-3">
                     <div className="flex justify-between">
                         <div className="flex items-center gap-1">
@@ -56,19 +56,19 @@ const SummarizedLocationCard = forwardRef((props, ref) => {
                 </a>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 text-[1rem]">
                 <ButtonLink
                     href={`/locations/${props.state.toLowerCase()}/${props.city.toLowerCase()}/${kebabCase(props.addressLine1)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-1">
+                    className="w-full py-2">
                     View Website
                 </ButtonLink>
                 <ButtonLink
                     href={`https://www.google.com/maps/dir/?api=1&destination=${props.addressLine1}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-1"
+                    className="w-full py-2"
                 >
                     Get Directions
                 </ButtonLink>

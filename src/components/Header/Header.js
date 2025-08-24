@@ -33,8 +33,8 @@ function Header(props) {
                 <a href="/locations">
                     <img
                         src="https://cloudbackend.scdn7.secure.raxcdn.com/img/upload/oilchangers-big2x.png"
-                        height="40"
-                        width="272"
+                        height="6.8rem"
+                        width="200rem"
                         alt="Oil Changers Logo"
                     />
                 </a>

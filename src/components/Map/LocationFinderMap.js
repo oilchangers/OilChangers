@@ -2,6 +2,8 @@ import { GoogleMap, LoadScript, Marker, OverlayView, OverlayViewF } from '@react
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { DEFAULT_MAP_CENTER } from '../../utils/constants';
 import LocationInfoWindow from '../SummarizedLocationCard/LocationInfoWindow';
+import ReactDOM from 'react-dom/server';
+import MapLegend from './MapLegend';
 
 const containerStyle = {
     width: '100%',
@@ -220,12 +222,12 @@ const LocationFinderMap = (props) => {
     const onLoad = useCallback(async (map) => {
         mapRef.current = map;
 
-        if (!map._legendInjected) {
-            const legendDiv = document.createElement("div");
-            legendDiv.innerHTML = legendHTML;
-            map.controls[window.google.maps.ControlPosition.LEFT_TOP].push(legendDiv);
-            map._legendInjected = true;
-        }
+        // if (!map._legendInjected) {
+        //     const legendDiv = document.createElement("div");
+        //     legendDiv.innerHTML = ReactDOM.renderToStaticMarkup(<MapLegend />);
+        //     map.controls[window.google.maps.ControlPosition.BOTTOM_CENTER].push(legendDiv);
+        //     map._legendInjected = true;
+        // }
 
         setComputingUserLocationCoordinates(true);
         getCoordinatesFromAddress(props.selectedUserLocation).then((coordinates) => {
