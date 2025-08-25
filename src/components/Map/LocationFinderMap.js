@@ -372,11 +372,11 @@ const LocationFinderMap = (props) => {
                         position={{ lat: selectedLocation.coordinates.latitude, lng: selectedLocation.coordinates.longitude }}
                         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                     >
-                        <div>
+                        <div className="hidden md:block">
                             <LocationInfoWindow
                                 onClose={() => setSelectedLocation(null)}
                                 {...selectedLocation}
-                                className="px-1 text-xs pt-0" />
+                                className="px-1 text-xs pt-0 max-w-[20rem]" />
                         </div>
 
                     </OverlayViewF>

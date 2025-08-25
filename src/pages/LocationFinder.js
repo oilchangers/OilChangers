@@ -181,7 +181,7 @@ const LocationFinder = () => {
             </Helmet>
 
             <div className="flex flex-col w-screen h-screen">
-                <div className="grid [grid-template-rows:auto_auto_2fr_auto_4fr] md:grid-rows-[auto_auto_400px] md:grid-cols-[auto_2fr]  w-[100%] min-h-[160vh] md:min-h-fit">
+                <div className="grid [grid-template-rows:auto_auto_2fr_auto_4fr] md:grid-rows-[auto_auto_400px] md:grid-cols-[21rem_2fr]  w-[100%] min-h-[160vh] md:min-h-fit">
                     {/* Search */}
                     <div className="flex-[1] col-start-1 col-span-1 p-6 xs:px-16 md:px-7 md:py-4 flex flex-col justify-center gap-5">
                         <div className="flex flex-col gap-3">
@@ -226,7 +226,7 @@ const LocationFinder = () => {
                     {/* Filters */}
                     {true &&
                         <div
-                            className="flex col-start-1 col-span-1 py-3 pl-4 xs:pl-0 xs:justify-center xs:px-16 md:px-9 md:py-2 text-black border-t md:border-b border-solid border-gray-400 relative z-10 shadow-[0_3px_2px_-1px_rgba(0,0,0,0.3)] md:shadow-none">
+                            className="flex col-start-1 col-span-1 py-3 pl-4 xs:pl-0 xs:justify-center xs:px-16 md:px-9 md:py-2 text-black border-t md:border-b border-solid border-gray-400 relative z-5 shadow-[0_3px_2px_-1px_rgba(0,0,0,0.3)] md:shadow-none">
                             <div className="flex flex-col min-w-[90%] xs:min-w-[80%] md:min-w-full gap-2">
                                 <div className="text-left text-sm font-bold">Filter locations</div>
                                 <div className="flex justify-between gap-5 text-xs">
@@ -309,10 +309,10 @@ const LocationFinder = () => {
                     </div>
 
                     {/* Legend */}
-                    <MapLegend className="text-[0.7rem] md:hidden xs:text-sm leading-[0.9] text-left text-black flex justify-between px-4 py-2 gap-6" />
+                    <MapLegend className="text-[0.7rem] xs:text-sm leading-[0.9] text-left text-black flex justify-between px-4 py-2 gap-6 md:absolute md:mr-6 left-[23rem] top-[80px] md:bg-white md:shadow-[2px_2px_8px_-2px_rgba(0,0,0,0.2)]" />
 
                     {/* Results */}
-                    <div className="flex-[5] col-start-1 col-span-1 relative z-10 flex flex-col overflow-auto">
+                    <div className="col-start-1 col-span-1 relative z-10 flex flex-col overflow-auto">
                         {isFetchingStores ?
                             <div className="text-left text-black px-4 xs:px-3 mt-3">Loading...</div> :
                             stores.length > 0 ?

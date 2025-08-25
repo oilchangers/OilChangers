@@ -1,6 +1,8 @@
 import Tooltip from "../Tooltip/Tooltip";
 import InfoIcon from "../Icons/InfoIcon";
 import ClockIcon from "../Icons/ClockIcon";
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 
 const WaitTime = (props) => {
     const getAvailabilityColor = (availability) => {
@@ -35,41 +37,41 @@ const WaitTime = (props) => {
                 {getAvailabilityText(props.waitTime.availabilityStatus)}
             </div>
             {props.waitTime.availabilityStatus === "Available" &&
-                <Tooltip title="The location has an open bay and is ready to service your vehicle.">
+                <Tippy content="The location has an open bay and is ready to service your vehicle.">
                     <div>
                         <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                     </div>
-                </Tooltip>
+                </Tippy>
             }
             {props.waitTime.availabilityStatus === "Indeterminate" &&
-                <Tooltip title="The location availability is unknown.">
+                <Tippy content="The location availability is unknown.">
                     <div>
                         <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                     </div>
-                </Tooltip>
+                </Tippy>
             }
             {props.waitTime.availabilityStatus === "Busy" &&
-                <Tooltip title={`The location is currently busy. You will need to wait at least ${props.waitTime.minWaitTimeMinutes - 1} minutes.`}>
+                <Tippy content={`The location is currently busy. You will need to wait at least ${props.waitTime.minWaitTimeMinutes - 1} minutes.`}>
                     <div>
                         <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                     </div>
-                </Tooltip>
+                </Tippy>
             }
             {props.waitTime.availabilityStatus !== "Available" &&
                 props.waitTime.availabilityStatus !== "Indeterminate" &&
                 props.waitTime.availabilityStatus !== "Busy" &&
                 <div>
                     {props.waitTime.minWaitTimeMinutes > 0 ?
-                        <Tooltip title={`Wait time is ${props.waitTime.minWaitTimeMinutes + 1} to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
+                        <Tippy content={`Wait time is ${props.waitTime.minWaitTimeMinutes + 1} to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
                             <div>
                                 <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                             </div>
-                        </Tooltip> :
-                        <Tooltip title={`Wait time is up to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
+                        </Tippy> :
+                        <Tippy content={`Wait time is up to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
                             <div>
                                 <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                             </div>
-                        </Tooltip>
+                        </Tippy>
                     }
                 </div>
             }

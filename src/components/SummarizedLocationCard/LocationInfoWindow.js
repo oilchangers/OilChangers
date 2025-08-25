@@ -21,7 +21,7 @@ const LocationInfoWindow = forwardRef((props, ref) => {
     return (
         <div
             ref={ref}
-            className={`flex flex-col gap-3 w-[275px] bg-white relative px-3 pb-3 pt-2 bottom-[55px] shadow-[0_3px_10px_-2px_rgba(0,0,0,0.6)] transform -translate-x-1/2 -translate-y-full ${props?.className}`}>
+            className={`flex flex-col gap-3 bg-white relative px-3 pb-3 pt-2 bottom-[55px] shadow-[0_3px_10px_-2px_rgba(0,0,0,0.6)] transform -translate-x-1/2 -translate-y-full ${props?.className}`}>
             <div className="flex flex-col justify-end gap-0">
                 <div className="flex justify-end">
                     <button
