@@ -1,4 +1,3 @@
-import Tooltip from "../Tooltip/Tooltip";
 import InfoIcon from "../Icons/InfoIcon";
 import ClockIcon from "../Icons/ClockIcon";
 import Tippy from '@tippyjs/react';
