@@ -36,13 +36,13 @@ const LocationInfoWindow = forwardRef((props, ref) => {
                     </button>
                 </div>
                 <div className="flex justify-between gap-2">
-                    <h1 className="uppercase text-left text-sm text-wrap">{props.locationName}</h1>
+                    <h1 className="uppercase text-left text-sm md:text-[1.05rem] text-wrap">{props.locationName}</h1>
 
                 </div>
                 <div className="text-[0.625rem] text-left text-gray-500 font-text">{props.locationType}</div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 md:text-[0.9rem]">
                 <div className="flex justify-between">
                     <div className="flex flex-col gap-3">
                         <div className="flex justify-between">
@@ -85,7 +85,7 @@ const LocationInfoWindow = forwardRef((props, ref) => {
 
                 </div>
 
-                <div className="text-sm text-left">
+                <div className="text-sm text-left md:text-base">
                     {isOpenToday ?
                         <div>
                             Open today from {formatTime(props.hours[today].open)} - {formatTime(props.hours[today].close)}

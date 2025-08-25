@@ -11,6 +11,12 @@
   --color-text: #ffffff;
 }
 
+@media (min-width: 1200px) {
+  :root {
+    --font-size: 14px;
+  }
+}
+
 /* Avenir Next Condensed Fonts */
 @font-face {
   font-family: 'Avenir Next Condensed';
