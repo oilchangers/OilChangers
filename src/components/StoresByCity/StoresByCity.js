@@ -11,7 +11,8 @@ const StoresByCity = () => {
 
     useEffect(() => {
         const getStores = async () => {
-            await axios.get(`${STORE_API_BASE_URL}api/stores?cityOrZipCode=${city}`, {
+            const fields = `fields=id,locationName,addressLine1,state,postalCode`;
+            await axios.get(`${STORE_API_BASE_URL}api/stores?cityOrZipCode=${city}&${fields}`, {
                 headers: {
                     'x-api-key': STORE_API_KEY
                 }
