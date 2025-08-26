@@ -42,7 +42,7 @@ const WaitTime = (props) => {
                     </div>
                 </Tippy>
             }
-            {props.waitTime.availabilityStatus === "Indeterminate" &&
+            {props.waitTime.availabilityStatus === "Unknown" &&
                 <Tippy content="The location availability is unknown.">
                     <div>
                         <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
@@ -57,7 +57,7 @@ const WaitTime = (props) => {
                 </Tippy>
             }
             {props.waitTime.availabilityStatus !== "Available" &&
-                props.waitTime.availabilityStatus !== "Indeterminate" &&
+                props.waitTime.availabilityStatus !== "Unknown" &&
                 props.waitTime.availabilityStatus !== "Busy" &&
                 <div>
                     {props.waitTime.minWaitTimeMinutes > 0 ?
