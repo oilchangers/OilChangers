@@ -2,8 +2,6 @@ import { GoogleMap, LoadScript, Marker, OverlayView, OverlayViewF } from '@react
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { DEFAULT_MAP_CENTER } from '../../utils/constants';
 import LocationInfoWindow from '../SummarizedLocationCard/LocationInfoWindow';
-import ReactDOM from 'react-dom/server';
-import MapLegend from './MapLegend';
 
 const containerStyle = {
     width: '100%',
@@ -172,30 +170,6 @@ const lightGrayStyle = [
     }
 ];
 
-const legendHTML = `
-<div style="display: flex; gap: 1.5rem; padding: 8px 1rem; background: white; box-shadow: 2px 2px 8px -2px rgba(0,0,0,0.2); font-family: sans-serif; font-size: 12px; margin: 24px;">
-    <div style="display: flex; gap: 6px; align-items: center;">
-        <img src="../../images/location_pin_yellow.png" alt="Oil Changers" width="12" />
-        <span>Oil Changers</span>
-    </div>
-
-    <div style="display: flex; gap: 6px; align-items: center;">
-        <img src="../../images/location_pin_grey.png" alt="OC & Car Wash" width="12" />
-        <span>OC & Car Wash</span>
-    </div>
-
-    <div style="display: flex; gap: 6px; align-items: center;">
-        <img src="../../images/location_pin_red.png" alt="OC + Repair" width="12" />
-        <span>OC + Repair</span>
-    </div>
-
-    <div style="display: flex; gap: 6px; align-items: center;">
-        <img src="../../images/location_pin_black.png" alt="Coming Soon" width="12" />
-        <span>Coming Soon</span>
-    </div>
-</div>
-`;
-
 const CustomDivMarker = ({ position, children }) => {
     return (
         <OverlayViewF
@@ -221,13 +195,6 @@ const LocationFinderMap = (props) => {
 
     const onLoad = useCallback(async (map) => {
         mapRef.current = map;
-
-        // if (!map._legendInjected) {
-        //     const legendDiv = document.createElement("div");
-        //     legendDiv.innerHTML = ReactDOM.renderToStaticMarkup(<MapLegend />);
-        //     map.controls[window.google.maps.ControlPosition.BOTTOM_CENTER].push(legendDiv);
-        //     map._legendInjected = true;
-        // }
 
         setComputingUserLocationCoordinates(true);
         getCoordinatesFromAddress(props.selectedUserLocation).then((coordinates) => {
