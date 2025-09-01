@@ -90,7 +90,7 @@ const DetailedLocationCard = ({ store, className, isLoading }) => {
                             <a href={`https://www.google.com/maps/dir/?api=1&destination=${store.addressLine1}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="cursor-pointer hover:no-underline"
+                                className="cursor-pointer hover:text-primary"
                             >
                                 {store.addressLine1}
                             </a>
@@ -99,7 +99,7 @@ const DetailedLocationCard = ({ store, className, isLoading }) => {
                         <div className="flex items-center gap-1.5">
                             <PhoneIcon />
                             {store.phoneNumber ?
-                                <a href={`tel:${store.phoneNumber}`} className="cursor-pointer hover:no-underline">{store.phoneNumber}</a> :
+                                <a href={`tel:${store.phoneNumber}`} className="cursor-pointer hover:text-primary">{store.phoneNumber}</a> :
                                 <div>N/A</div>
                             }
                         </div>
