@@ -55,6 +55,7 @@ const LocationDetails = () => {
                 showLegend={false}
                 canBeInteractedWith={true}
                 showCenterMarker={false}
+                showInfoWindowOnMarkerClick={false}
                 locations={store ? [store] : []}
             />
         </div>

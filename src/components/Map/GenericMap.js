@@ -206,7 +206,7 @@ const CustomDivMarker = ({ position, children }) => {
     );
 };
 
-const GenericMap = ({ locations, center, showLegend = false, canBeInteractedWith = true, showCenterMarker = true }) => {
+const GenericMap = ({ locations, center, showLegend = false, canBeInteractedWith = true, showCenterMarker = true, showInfoWindowOnMarkerClick = true }) => {
     const containerStyle = {
         width: '100%',
         height: '100%'
@@ -260,7 +260,7 @@ const GenericMap = ({ locations, center, showLegend = false, canBeInteractedWith
                     icon={{
                         url: markerIcon
                     }}
-                    onClick={() => setSelectedLocation(location)}
+                    onClick={() => showInfoWindowOnMarkerClick && setSelectedLocation(location)}
                 />
             }));
         }
@@ -294,7 +294,7 @@ const GenericMap = ({ locations, center, showLegend = false, canBeInteractedWith
                 {markers}
 
                 {/* Display the info window for the selected location */}
-                {!!selectedLocation &&
+                {!!selectedLocation && showInfoWindowOnMarkerClick &&
                     <InfoWindow
                         position={{ lat: selectedLocation.coordinates.latitude, lng: selectedLocation.coordinates.longitude }}
                         onCloseClick={() => setSelectedLocation(null)}
