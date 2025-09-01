@@ -51,7 +51,6 @@ const LocationDetails = () => {
             />
 
             <GenericMap
-                className="relative"
                 center={store ? { lat: store?.coordinates.latitude, lng: store?.coordinates.longitude - 0.1 } : DEFAULT_MAP_CENTER}
                 showLegend={false}
                 canBeInteractedWith={true}
