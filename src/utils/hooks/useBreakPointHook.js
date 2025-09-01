@@ -13,15 +13,35 @@ const useBreakPoint = () => {
     const [width, setWidth] = useState(window.innerWidth);
 
     useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth);
+        const handleResize = () => {
+            setWidth(window.innerWidth);
+        };
+
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    return Object.entries(breakpoints).reduce((acc, [key, value]) => {
-        acc[key] = width >= value;
-        return acc;
-    }, {});
+    if (width < breakpoints.sm) {
+        return "xs";
+    }
+
+    if (width < breakpoints.md) {
+        return "sm";
+    }
+
+    if (width < breakpoints.lg) {
+        return "md";
+    }
+
+    if (width < breakpoints.xl) {
+        return "lg";
+    }
+
+    if (width < breakpoints["2xl"]) {
+        return "xl";
+    }
+
+    return "2xl";
 }
 
 export default useBreakPoint;

@@ -15,7 +15,8 @@ const LocationDetails = () => {
 
     useEffect(() => {
         const getStore = async () => {
-            const url = `${STORE_API_BASE_URL}api/stores/${sentenceCase(idOrAddress)}?includeWaitTime=true&includeCoordinates=true&includeRating=true`;
+            const fields = 'fields=id,hours,locationName,locationType,state,city,addressLine1,postalCode,services,phoneNumber,filters,waitTime,distanceFromUserLocation,coordinates,rating,homepageTitleTag,homepageMetaDescription';
+            const url = `${STORE_API_BASE_URL}api/stores/${sentenceCase(idOrAddress)}?${fields}`;
             await axios.get(url, {
                 headers: {
                     'x-api-key': STORE_API_KEY
@@ -28,7 +29,6 @@ const LocationDetails = () => {
                     document.querySelector('meta[name="description"]').setAttribute('content', response.data?.homepageMetaDescription);
                 }
             }).catch((ignore) => {
-                console.log("Error fetching store details");
             }).finally(() => {
                 setIsLoading(false);
             })
@@ -42,17 +42,16 @@ const LocationDetails = () => {
     }, []);
 
     return (
-        <div className="w-[100vw] h-[100vh]">
-            {isLoading ?
-                <div className="absolute left-4 top-16 w-[100%] w-min-[48%] h-min-[80%] z-50 justify-center border border-solid border-red-500 bg-red-500">
-                    <div className="flex justify-center items-center absolute w-min-[50vw] h-full border border-solid shadow-xl">
-                        {/* <ClipLoader color="#fcca46" loading={isLoading} size={100} /> */}
-                    </div>
-                </div> :
-                <DetailedLocationCard store={store} className="absolute left-4 top-16 w-[48%] h-fit z-50 bg-white" />
-            }
+        <div className="w-screen h-screen">
+
+            <DetailedLocationCard
+                store={store}
+                className="bg-white lg:w-[70%] xl:w-[50%] lg:absolute z-50 top-24 left-7 shadow-xl"
+                isLoading={isLoading}
+            />
 
             <GenericMap
+                className="relative"
                 center={store ? { lat: store?.coordinates.latitude, lng: store?.coordinates.longitude - 0.1 } : DEFAULT_MAP_CENTER}
                 showLegend={false}
                 canBeInteractedWith={true}

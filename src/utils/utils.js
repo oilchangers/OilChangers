@@ -5,3 +5,9 @@ export const formatTime = (timeString) => {
     const parsed = parse(padded, 'HHmm', new Date());
     return format(parsed, 'h:mm a'); // → "8:00 AM", "7:00 PM"
 }
+
+export const gridClass = (prefix, value, max) => {
+    // clamp so you don’t generate invalid classes
+    const safeValue = Math.min(value, max);
+    return `${prefix}-${safeValue}`;
+}
