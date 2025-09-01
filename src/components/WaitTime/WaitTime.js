@@ -61,7 +61,7 @@ const WaitTime = (props) => {
                 props.waitTime.availabilityStatus !== "Busy" &&
                 <div>
                     {props.waitTime.minWaitTimeMinutes > 0 ?
-                        <Tippy content={`Wait time is ${props.waitTime.minWaitTimeMinutes + 1} to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
+                        <Tippy content={`Wait time is ${props.waitTime.minWaitTimeMinutes} to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
                             <div>
                                 <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                             </div>
