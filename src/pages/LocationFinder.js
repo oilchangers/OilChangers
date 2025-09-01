@@ -20,11 +20,13 @@ const LocationFinder = () => {
     const [locationTypesQueryParamsString, setLocationTypesQueryParamsString] = useState([]);
     const [canAccessCurrentUserLocation, setCanAccessCurrentUserLocation] = useState(false);
     const [search, setSearch] = useState(false);
-    const [selectedUserLocation, setSelectedUserLocation] = useState('');
+    const [userLocation, setUserLocation] = useState('');
     const [isCurrentLocationSelectionVisible, setIsCurrentLocationSelectionVisible] = useState(true);
     const [hasUserRequestedCurrentLocation, setHasUserRequestedCurrentLocation] = useState(false);
     const [states, setStates] = useState([]);
     const [isLoadingStates, setIsLoadingStates] = useState(false);
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const locationRefs = useRef({});
 
     useEffect(() => {
         try {
@@ -69,12 +71,10 @@ const LocationFinder = () => {
                 'x-api-key': STORE_API_KEY
             }
         }).then(response => {
-            if (response.status === 200) {
-                setStores(response.data);
-            }
+            setStores(response.data);
         }).catch(() => {
         }).finally(() => {
-            setSelectedUserLocation(cityOrZipCode);
+            setUserLocation(cityOrZipCode);
             setIsFetchingStores(false);
         });
     };
@@ -136,7 +136,7 @@ const LocationFinder = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 if (position.coords.latitude && position.coords.longitude) {
-                    setSelectedUserLocation({
+                    setUserLocation({
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     });
@@ -172,6 +172,15 @@ const LocationFinder = () => {
 
         fetchStates();
     }, []);
+
+    useEffect(() => {
+        if (selectedLocation && locationRefs.current[selectedLocation.id]) {
+            locationRefs.current[selectedLocation.id].scrollIntoView({
+                block: 'end',
+                behavior: 'smooth'
+            });
+        }
+    }, [selectedLocation]);
 
     return (
         <>
@@ -302,7 +311,9 @@ const LocationFinder = () => {
                     {/* Map */}
                     <div className="flex-[4] md:col-start-2 md:col-span-2 md:row-start-1 md:row-span-3">
                         <LocationFinderMap
-                            selectedUserLocation={selectedUserLocation}
+                            selectedLocation={selectedLocation}
+                            setSelectedLocation={setSelectedLocation}
+                            userLocation={userLocation}
                             stores={stores}
                             isFetchingStores={isFetchingStores}
                         />
@@ -318,7 +329,9 @@ const LocationFinder = () => {
                             stores.length > 0 ?
                                 <div className="flex flex-col">
                                     {stores.map((store) => (
-                                        <div key={store.id} className="cursor-pointer hover:bg-gray-100">
+                                        <div key={store.id} className={`cursor-pointer hover:bg-gray-100 ${selectedLocation?.id === store.id ? 'bg-gray-100' : ''}`}
+                                            ref={(element) => locationRefs.current[store.id] = element}
+                                            onClick={() => setSelectedLocation(store)}>
                                             <div className="flex flex-col my-3 md:my-0 px-4">
                                                 <SummarizedLocationCard {...store} className="xs:px-12 md:px-0" />
                                             </div>

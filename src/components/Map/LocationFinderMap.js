@@ -188,7 +188,6 @@ const LocationFinderMap = (props) => {
     const [locations, setLocations] = useState(props.stores);
     const [center, setCenter] = useState(DEFAULT_MAP_CENTER);
     const [markers, setMarkers] = useState([]);
-    const [selectedLocation, setSelectedLocation] = useState(null);
     const [zoom, setZoom] = useState(4);
     const [computingUserLocationCoordinates, setComputingUserLocationCoordinates] = useState(false);
     const mapRef = useRef(null);
@@ -197,7 +196,7 @@ const LocationFinderMap = (props) => {
         mapRef.current = map;
 
         setComputingUserLocationCoordinates(true);
-        getCoordinatesFromAddress(props.selectedUserLocation).then((coordinates) => {
+        getCoordinatesFromAddress(props.userLocation).then((coordinates) => {
             if (coordinates) {
                 setCenter(coordinates);
             }
@@ -205,7 +204,7 @@ const LocationFinderMap = (props) => {
             setComputingUserLocationCoordinates(false);
         })
 
-    }, [props.selectedUserLocation]);
+    }, [props.userLocation]);
 
     useEffect(() => {
         if (props.stores) {
@@ -215,7 +214,7 @@ const LocationFinderMap = (props) => {
 
     useEffect(() => {
         setComputingUserLocationCoordinates(true);
-        getCoordinatesFromAddress(props.selectedUserLocation)
+        getCoordinatesFromAddress(props.userLocation)
             .then((coordinates) => {
                 if (coordinates) {
                     setCenter(coordinates);
@@ -224,7 +223,7 @@ const LocationFinderMap = (props) => {
             }).finally(() => {
                 setComputingUserLocationCoordinates(false);
             });
-    }, [props.selectedUserLocation]);
+    }, [props.userLocation]);
 
     function getCoordinatesFromAddress(address) {
         // Check if Google Maps is loaded
@@ -277,28 +276,32 @@ const LocationFinderMap = (props) => {
                     }}
                     icon={{ url: markerColor }}
                     scaledSize={new window.google.maps.Size(40, 51)}
-                    onClick={() => {
-                        setSelectedLocation(location);
-
-                        if (mapRef.current) {
-                            mapRef.current.panTo({
-                                lat: location.coordinates.latitude,
-                                lng: location.coordinates.longitude
-                            })
-                            mapRef.current.panBy(0, -100);
-                        }
-                        else {
-                            // If the map is not loaded fall back to setting the center of the map to the location
-                            setCenter({
-                                lat: location.coordinates.latitude,
-                                lng: location.coordinates.longitude
-                            })
-                        }
-                    }}
+                    onClick={() => props.setSelectedLocation(location)}
                 />
             }));
         }
     }, [locations]);
+
+    useEffect(() => {
+        if (!props.selectedLocation) {
+            return;
+        }
+
+        if (mapRef.current) {
+            mapRef.current.panTo({
+                lat: props.selectedLocation.coordinates.latitude,
+                lng: props.selectedLocation.coordinates.longitude
+            })
+            mapRef.current.panBy(0, -100);
+        }
+        else {
+            // If the map is not loaded fall back to setting the center of the map to the location
+            setCenter({
+                lat: props.selectedLocation.coordinates.latitude,
+                lng: props.selectedLocation.coordinates.longitude
+            })
+        }
+    }, [props.selectedLocation]);
 
     const isDefaultLocation = (location) => {
         return location.lat === DEFAULT_MAP_CENTER.lat && location.lng === DEFAULT_MAP_CENTER.lng;
@@ -333,16 +336,16 @@ const LocationFinderMap = (props) => {
                 {markers}
 
                 {/* Display the info window for the selected location */}
-                {!!selectedLocation &&
+                {!!props.selectedLocation &&
                     <OverlayViewF
                         className="h-fit w-fit p-4"
-                        position={{ lat: selectedLocation.coordinates.latitude, lng: selectedLocation.coordinates.longitude }}
+                        position={{ lat: props.selectedLocation.coordinates.latitude, lng: props.selectedLocation.coordinates.longitude }}
                         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                     >
                         <div className="hidden md:block">
                             <LocationInfoWindow
-                                onClose={() => setSelectedLocation(null)}
-                                {...selectedLocation}
+                                onClose={() => props.setSelectedLocation(null)}
+                                {...props.selectedLocation}
                                 className="px-1 text-xs pt-0 max-w-[20rem]" />
                         </div>
 
