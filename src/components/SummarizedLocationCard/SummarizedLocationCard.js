@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import PhoneIcon from '../Icons/PhoneIcon';
 import LocationPinIcon from '../Icons/LocationPinIcon';
 import DirectionIcon from '../Icons/DirectionIcon';
@@ -7,6 +7,11 @@ import WaitTime from '../WaitTime/WaitTime';
 import { kebabCase } from 'change-case';
 
 const SummarizedLocationCard = forwardRef((props, ref) => {
+
+    const isOpenToday = useMemo(() => {
+        const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+        return props.hours[today]?.open && props.hours[today]?.close;
+    }, [props.hours]);
 
     return (
         <div ref={ref} className={`flex flex-col gap-3 ${props?.className}`}>
@@ -41,7 +46,7 @@ const SummarizedLocationCard = forwardRef((props, ref) => {
                         }
                     </div>
 
-                    <WaitTime waitTime={props.waitTime} />
+                    {isOpenToday && <WaitTime waitTime={props.waitTime} />}
                 </div>
 
                 <a href={`https://www.google.com/maps/dir/?api=1&destination=${props.addressLine1}`}

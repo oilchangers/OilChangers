@@ -16,6 +16,7 @@ import HighMileageOilChangeIcon from '../Icons/HighMileageOilChangeIcon';
 import WaitTime from '../WaitTime/WaitTime';
 import Rating from "@mui/material/Rating";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useMemo } from 'react';
 
 const DetailedLocationCard = ({ store, className, isLoading }) => {
 
@@ -46,6 +47,11 @@ const DetailedLocationCard = ({ store, className, isLoading }) => {
                 return <BrakeServiceIcon />;
         }
     }
+
+    const isOpenToday = useMemo(() => {
+        const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+        return store?.hours[today]?.open && store?.hours[today]?.close;
+    }, [store?.hours]);
 
     return (
         <div className={`w-full ${className}`}>
@@ -104,7 +110,7 @@ const DetailedLocationCard = ({ store, className, isLoading }) => {
                             }
                         </div>
 
-                        <WaitTime waitTime={store.waitTime} />
+                        {isOpenToday && <WaitTime waitTime={store.waitTime} />}
 
                         <ButtonLink href={`https://www.google.com/maps/dir/?api=1&destination=${store.addressLine1}`}
                             target="_blank" rel="noopener noreferrer"

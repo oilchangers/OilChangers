@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { sentenceCase } from "change-case";
 import { STORE_API_BASE_URL, STORE_API_KEY } from "../constants/apiConstants";
-import { ClipLoader } from "react-spinners";
 import { DEFAULT_MAP_CENTER } from "../utils/constants";
 
 const LocationDetails = () => {
