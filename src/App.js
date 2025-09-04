@@ -26,7 +26,7 @@ function App() {
         <Header title={title} />
         <div className="container d-flex align-items-center flex-column">
           <Routes>
-            <Route path="/" exact={true} element={<RegistrationForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
+            <Route path="/" exact={true} element={<LocationFinder />} />
             <Route path="/register" element={<RegistrationForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
             <Route path="/login" element={<LoginForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
             <Route path="/UpdateProfileForm" element={<UpdateProfileForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
