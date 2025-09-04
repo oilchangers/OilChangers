@@ -12,7 +12,7 @@ const WaitTime = (props) => {
                 return 'text-[#f2c31a]';
             case 'ModerateWait':
                 return 'text-orange-400';
-            case 'Busy':
+            case 'LongerWait':
                 return 'text-red-500';
             default:
                 return 'text-gray-500';
@@ -49,7 +49,7 @@ const WaitTime = (props) => {
                     </div>
                 </Tippy>
             }
-            {props.waitTime.availabilityStatus === "Busy" &&
+            {props.waitTime.availabilityStatus === "LongerWait" &&
                 <Tippy content={`The location is currently busy. You will need to wait at least ${props.waitTime.minWaitTimeMinutes - 1} minutes.`}>
                     <div>
                         <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
@@ -58,7 +58,7 @@ const WaitTime = (props) => {
             }
             {props.waitTime.availabilityStatus !== "Available" &&
                 props.waitTime.availabilityStatus !== "Unknown" &&
-                props.waitTime.availabilityStatus !== "Busy" &&
+                props.waitTime.availabilityStatus !== "LongerWait" &&
                 <div>
                     {props.waitTime.minWaitTimeMinutes > 0 ?
                         <Tippy content={`Wait time is ${props.waitTime.minWaitTimeMinutes} to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
@@ -66,7 +66,7 @@ const WaitTime = (props) => {
                                 <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                             </div>
                         </Tippy> :
-                        <Tippy content={`Wait time is up to ${props.waitTime.maxWaitTimeMinutes} minutes.`}>
+                        <Tippy content={`Wait time is up to ${props.waitTime.maxWaitTimeMinutes} minutes.`} delay={500}>
                             <div>
                                 <InfoIcon height="0.875rem" width="0.875rem" className="fill-none cursor-pointer" />
                             </div>
