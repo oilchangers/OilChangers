@@ -15,7 +15,7 @@ const LocationFinder = () => {
     const [stores, setStores] = useState([]);
     const storesRef = useRef(stores);
     const [cityOrZipCode, setCityOrZipCode] = useState('');
-    const [isFetchingStores, setIsFetchingStores] = useState(false);
+    const [isLoadingStores, setIsLoadingStores] = useState(false);
     const [selectedLocationTypes, setSelectedLocationTypes] = useState([]);
     const [locationTypesQueryParamsString, setLocationTypesQueryParamsString] = useState([]);
     const [canAccessCurrentUserLocation, setCanAccessCurrentUserLocation] = useState(false);
@@ -61,7 +61,7 @@ const LocationFinder = () => {
             return;
         }
 
-        setIsFetchingStores(true);
+        setIsLoadingStores(true);
 
         const selectedFieldsParam = 'id,hours,locationName,locationType,state,city,addressLine1,postalCode,phoneNumber,filters,waitTime,distanceFromUserLocation,coordinates';
 
@@ -76,12 +76,12 @@ const LocationFinder = () => {
         }).catch(() => {
         }).finally(() => {
             setUserLocation(cityOrZipCode);
-            setIsFetchingStores(false);
+            setIsLoadingStores(false);
         });
     };
 
     const getStores = async (url) => {
-        setIsFetchingStores(true);
+        setIsLoadingStores(true);
         await axios.get(url, {
             headers: {
                 'x-api-key': STORE_API_KEY
@@ -92,7 +92,7 @@ const LocationFinder = () => {
             }
         }).catch(() => {
         }).finally(() => {
-            setIsFetchingStores(false);
+            setIsLoadingStores(false);
         });
     }
 
@@ -182,7 +182,14 @@ const LocationFinder = () => {
         }
 
         getStoresByLocationType();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedLocationTypes]);
+
+    useEffect(() => {
+        if (!isLoadingStores && !isInitialRender.current) {
+            setSelectedLocation(null);
+        }
+    }, [isLoadingStores]);
 
     const isFilterSelected = (filter) => {
         return selectedLocationTypes.includes(filter);
@@ -261,7 +268,7 @@ const LocationFinder = () => {
                                     <div className="flex flex-col">
                                         <label htmlFor="oil-changers" className="flex gap-2 items-center">
                                             <input
-                                                disabled={isFetchingStores}
+                                                disabled={isLoadingStores}
                                                 checked={isFilterSelected('Oil Changers')}
                                                 type="checkbox"
                                                 name="oil-changers"
@@ -280,7 +287,7 @@ const LocationFinder = () => {
                                         </label>
                                         <label htmlFor="car-wash" className="flex gap-2 items-center">
                                             <input
-                                                disabled={isFetchingStores}
+                                                disabled={isLoadingStores}
                                                 type="checkbox"
                                                 name="car-wash"
                                                 className="w-3 h-3"
@@ -304,7 +311,7 @@ const LocationFinder = () => {
                                     <div className="flex flex-col text-xs ">
                                         <label htmlFor="oil-changers-plus-repair" className="flex gap-2 items-center">
                                             <input
-                                                disabled={isFetchingStores}
+                                                disabled={isLoadingStores}
                                                 checked={isFilterSelected('Oil Changers + Repair')}
                                                 type="checkbox"
                                                 name="oil-changers-plus-repair"
@@ -326,7 +333,7 @@ const LocationFinder = () => {
 
                                         <label htmlFor="coming-soon" className="flex items-center justify-start gap-2">
                                             <input
-                                                disabled={isFetchingStores}
+                                                disabled={isLoadingStores}
                                                 checked={isFilterSelected('Coming Soon')}
                                                 type="checkbox"
                                                 name="coming-soon"
@@ -359,7 +366,7 @@ const LocationFinder = () => {
                             setSelectedLocation={setSelectedLocation}
                             userLocation={userLocation}
                             stores={stores}
-                            isFetchingStores={isFetchingStores}
+                            isFetchingStores={isLoadingStores}
                         />
                     </div>
 
@@ -368,7 +375,7 @@ const LocationFinder = () => {
 
                     {/* Results */}
                     <div className="col-start-1 col-span-1 relative z-10 flex flex-col overflow-auto">
-                        {isFetchingStores ?
+                        {isLoadingStores ?
                             <div className="text-left text-black px-4 xs:px-3 mt-3">Loading...</div> :
                             stores.length > 0 ?
                                 <div className="flex flex-col">
