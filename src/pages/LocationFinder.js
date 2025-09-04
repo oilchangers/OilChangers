@@ -27,6 +27,7 @@ const LocationFinder = () => {
     const [isLoadingStates, setIsLoadingStates] = useState(false);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const locationRefs = useRef({});
+    const isInitialRender = useRef(true);
 
     useEffect(() => {
         try {
@@ -55,7 +56,7 @@ const LocationFinder = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleSearch = async (cityOrZipCode) => {
+    const getStoresByCityOrZipCode = async (cityOrZipCode) => {
         if (!cityOrZipCode) {
             return;
         }
@@ -64,7 +65,7 @@ const LocationFinder = () => {
 
         const selectedFieldsParam = 'id,hours,locationName,locationType,state,city,addressLine1,postalCode,phoneNumber,filters,waitTime,distanceFromUserLocation,coordinates';
 
-        let url = `${STORE_API_BASE_URL}api/stores?cityOrZipCode=${cityOrZipCode}${locationTypesQueryParamsString}&fields=${selectedFieldsParam}`;
+        let url = `${STORE_API_BASE_URL}api/stores?cityOrZipCode=${cityOrZipCode}&${locationTypesQueryParamsString}&fields=${selectedFieldsParam}`;
 
         await axios.get(url, {
             headers: {
@@ -78,35 +79,6 @@ const LocationFinder = () => {
             setIsFetchingStores(false);
         });
     };
-
-    const handleGetStoresByLocationType = (event, locationType) => {
-        const locationTypes = [...selectedLocationTypes];
-
-        if (event.target.checked) {
-            locationTypes.push(locationType);
-            setSelectedLocationTypes(locationTypes);
-        } else {
-            locationTypes.splice(locationTypes.indexOf(locationType), 1);
-            setSelectedLocationTypes(locationTypes);
-        }
-
-        let locationTypesQueryParamsString = '';
-        for (let locationType of locationTypes) {
-            locationTypesQueryParamsString += `&locationType=${locationType.replace("+", "%2B").replace("&", "%26")}`;
-        }
-
-        setLocationTypesQueryParamsString(locationTypesQueryParamsString);
-
-        let url = '';
-        if (cityOrZipCode) {
-            url = `${STORE_API_BASE_URL}api/stores?cityOrZipCode=${cityOrZipCode}${locationTypesQueryParamsString}`;
-        }
-        else {
-            url = `${STORE_API_BASE_URL}api/stores${locationTypesQueryParamsString}`;
-        }
-
-        getStores(url);
-    }
 
     const getStores = async (url) => {
         setIsFetchingStores(true);
@@ -163,7 +135,6 @@ const LocationFinder = () => {
                 setStates(response.data);
             })
                 .catch(error => {
-                    console.error("Error fetching states", error);
                 })
                 .finally(() => {
                     setIsLoadingStates(false);
@@ -182,6 +153,54 @@ const LocationFinder = () => {
         }
     }, [selectedLocation]);
 
+    useEffect(() => {
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            return;
+        }
+
+        const getStoresByLocationType = () => {
+            let locationTypesQueryParamsString = '';
+            if (selectedLocationTypes.length !== 0) {
+                locationTypesQueryParamsString = '&locationTypes=';
+                const selectedLocationTypesString = selectedLocationTypes.join(',');
+                locationTypesQueryParamsString += `${selectedLocationTypesString.replace("+", "%2B").replace("&", "%26")}`;
+            }
+
+            setLocationTypesQueryParamsString(locationTypesQueryParamsString);
+
+            const selectedFieldsParam = 'id,hours,locationName,locationType,state,city,addressLine1,postalCode,phoneNumber,filters,waitTime,distanceFromUserLocation,coordinates';
+            let url = '';
+            if (cityOrZipCode) {
+                url = `${STORE_API_BASE_URL}api/stores?cityOrZipCode=${cityOrZipCode}${locationTypesQueryParamsString}&fields=${selectedFieldsParam}`;
+            }
+            else {
+                url = `${STORE_API_BASE_URL}api/stores${locationTypesQueryParamsString}&fields=${selectedFieldsParam}`;
+            }
+
+            getStores(url);
+        }
+
+        getStoresByLocationType();
+    }, [selectedLocationTypes]);
+
+    const isFilterSelected = (filter) => {
+        return selectedLocationTypes.includes(filter);
+    }
+
+    const toggleLocationTypeFilter = (event, filter) => {
+        let locationTypes = [...selectedLocationTypes];
+
+        if (event.target.checked) {
+            locationTypes.push(filter);
+            setSelectedLocationTypes(locationTypes);
+        }
+        else {
+            locationTypes = selectedLocationTypes.filter(locationType => locationType !== filter);
+            setSelectedLocationTypes(locationTypes);
+        }
+    }
+
     return (
         <>
             <Helmet>
@@ -199,8 +218,8 @@ const LocationFinder = () => {
                             </div>
                             <form className="flex flex-col gap-2" onSubmit={(e) => {
                                 e.preventDefault();
-                                handleSearch(cityOrZipCode);
                                 setSearch(true);
+                                getStoresByCityOrZipCode(cityOrZipCode);
                             }}>
                                 <SearchBox
                                     onChange={(e) => setCityOrZipCode(e.target.value)}
@@ -217,7 +236,7 @@ const LocationFinder = () => {
                         </div>
 
                         {true &&
-                            <div className="flex items-center gap-2 text-sm">
+                            <div className={`flex items-center gap-2 text-sm`}>
                                 <MyLocationIcon width="1rem" height="1rem" />
                                 <div
                                     className="underline cursor-pointer"
@@ -233,7 +252,7 @@ const LocationFinder = () => {
                     </div>
 
                     {/* Filters */}
-                    {true &&
+                    {(search && cityOrZipCode) ?
                         <div
                             className="flex col-start-1 col-span-1 py-3 pl-4 xs:pl-0 xs:justify-center xs:px-16 md:px-9 md:py-2 text-black border-t md:border-b border-solid border-gray-400 relative z-5 shadow-[0_3px_2px_-1px_rgba(0,0,0,0.3)] md:shadow-none">
                             <div className="flex flex-col min-w-[90%] xs:min-w-[80%] md:min-w-full gap-2">
@@ -242,17 +261,18 @@ const LocationFinder = () => {
                                     <div className="flex flex-col">
                                         <label htmlFor="oil-changers" className="flex gap-2 items-center">
                                             <input
-                                                checked={selectedLocationTypes.includes('Oil Changers')}
+                                                disabled={isFetchingStores}
+                                                checked={isFilterSelected('Oil Changers')}
                                                 type="checkbox"
                                                 name="oil-changers"
                                                 className="w-3 h-3"
-                                                onChange={(e) => handleGetStoresByLocationType(e, 'Oil Changers')}
+                                                onChange={(e) => { toggleLocationTypeFilter(e, 'Oil Changers'); }}
                                             />
                                             <span
                                                 title="Oil Changers"
                                                 className="text-wrap hover:underline cursor-pointer"
                                                 onClick={() => {
-                                                    handleGetStoresByLocationType({ target: { checked: !selectedLocationTypes.includes('Oil Changers') } }, 'Oil Changers');
+                                                    toggleLocationTypeFilter({ target: { checked: isFilterSelected('Oil Changers') } }, 'Oil Changers');
                                                 }}
                                             >
                                                 Oil Changers
@@ -260,15 +280,20 @@ const LocationFinder = () => {
                                         </label>
                                         <label htmlFor="car-wash" className="flex gap-2 items-center">
                                             <input
+                                                disabled={isFetchingStores}
                                                 type="checkbox"
                                                 name="car-wash"
                                                 className="w-3 h-3"
-                                                onChange={(e) => handleGetStoresByLocationType(e, 'Oil Changers & Car Wash')} />
+                                                checked={isFilterSelected('Oil Changers & Car Wash')}
+                                                onChange={(e) => {
+                                                    toggleLocationTypeFilter(e, 'Oil Changers & Car Wash');
+                                                }}
+                                            />
                                             <span
                                                 title="Oil Changers & Car Wash"
                                                 className="text-wrap hover:underline cursor-pointer"
                                                 onClick={() => {
-                                                    handleGetStoresByLocationType({ target: { checked: !selectedLocationTypes.includes('Oil Changers & Car Wash') } }, 'Oil Changers & Car Wash');
+                                                    toggleLocationTypeFilter({ target: { checked: isFilterSelected('Oil Changers & Car Wash') } }, 'Oil Changers & Car Wash');
                                                 }}
                                             >
                                                 Car Wash
@@ -278,12 +303,21 @@ const LocationFinder = () => {
 
                                     <div className="flex flex-col text-xs ">
                                         <label htmlFor="oil-changers-plus-repair" className="flex gap-2 items-center">
-                                            <input type="checkbox" name="oil-changers-plus-repair" className="w-3 h-3" onChange={(e) => handleGetStoresByLocationType(e, 'Oil Changers + Repair')} />
+                                            <input
+                                                disabled={isFetchingStores}
+                                                checked={isFilterSelected('Oil Changers + Repair')}
+                                                type="checkbox"
+                                                name="oil-changers-plus-repair"
+                                                className="w-3 h-3"
+                                                onChange={(e) => {
+                                                    toggleLocationTypeFilter(e, 'Oil Changers + Repair');
+                                                }}
+                                            />
                                             <span
                                                 title="Oil Changers + Repair"
                                                 className="text-wrap hover:underline cursor-pointer"
                                                 onClick={() => {
-                                                    handleGetStoresByLocationType({ target: { checked: !selectedLocationTypes.includes('Oil Changers + Repair') } }, 'Oil Changers + Repair');
+                                                    toggleLocationTypeFilter({ target: { checked: isFilterSelected('Oil Changers + Repair') } }, 'Oil Changers + Repair');
                                                 }}
                                             >
                                                 Oil Changers + Repair
@@ -291,12 +325,21 @@ const LocationFinder = () => {
                                         </label>
 
                                         <label htmlFor="coming-soon" className="flex items-center justify-start gap-2">
-                                            <input type="checkbox" name="coming-soon" className="w-3 h-3" onChange={(e) => handleGetStoresByLocationType(e, 'Coming Soon')} />
+                                            <input
+                                                disabled={isFetchingStores}
+                                                checked={isFilterSelected('Coming Soon')}
+                                                type="checkbox"
+                                                name="coming-soon"
+                                                className="w-3 h-3"
+                                                onChange={(e) => {
+                                                    toggleLocationTypeFilter(e, 'Coming Soon');
+                                                }}
+                                            />
                                             <span
                                                 title="Coming Soon"
                                                 className="text-wrap hover:underline cursor-pointer"
                                                 onClick={() => {
-                                                    handleGetStoresByLocationType({ target: { checked: !selectedLocationTypes.includes('Coming Soon') } }, 'Coming Soon');
+                                                    toggleLocationTypeFilter({ target: { checked: isFilterSelected('Coming Soon') } }, 'Coming Soon');
                                                 }}
                                             >
                                                 Coming Soon
@@ -305,7 +348,8 @@ const LocationFinder = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> :
+                        <div className="md:border-b border-solid border-gray-400 mt-2" />
                     }
 
                     {/* Map */}
