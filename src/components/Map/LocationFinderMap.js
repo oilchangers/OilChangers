@@ -356,7 +356,9 @@ const LocationFinderMap = (props) => {
                 {(center && !isDefaultLocation(center)) &&
                     < CustomDivMarker
                         position={center}
-                    />
+                    >
+                        <div className="bg-[#008000] h-[20px] w-[20px] rounded-full opacity-50" />
+                    </CustomDivMarker>
                 }
 
                 {/* Display an overlay when fetching stores or computing the user location coordinates */}
