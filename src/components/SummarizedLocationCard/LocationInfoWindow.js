@@ -99,7 +99,7 @@ const LocationInfoWindow = forwardRef((props, ref) => {
 
             <div className="flex items-center gap-4">
                 <ButtonLink
-                    href={`/locations/${props.state.code.toLowerCase()}/${props.city.toLowerCase()}/${kebabCase(props.addressLine1)}`}
+                    href={`/locations/${props.state.code.toLowerCase()}/${kebabCase(props.city.toLowerCase())}/${kebabCase(props.addressLine1)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full py-1">
