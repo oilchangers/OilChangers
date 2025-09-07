@@ -39,11 +39,11 @@ const LocationFinder = () => {
                 .withAutomaticReconnect()
                 .build();
 
-            signalRConnection.on("StoreAvailabilityChanged", (message) => {
+            signalRConnection.on("StoreWaitTimeChanged", (message) => {
                 const currentStores = storesRef.current;
                 const store = currentStores.find(store => store.id === message.storeId);
                 if (store) {
-                    store.availabilityStatus = message.availabilityStatus;
+                    store.waitTime = message.waitTime;
                     setStores([...currentStores]);
                 }
             });
@@ -208,6 +208,10 @@ const LocationFinder = () => {
         }
     }
 
+    const displayFilters = () => {
+        return search && cityOrZipCode;
+    }
+
     return (
         <>
             <Helmet>
@@ -259,7 +263,7 @@ const LocationFinder = () => {
                     </div>
 
                     {/* Filters */}
-                    {(search && cityOrZipCode) ?
+                    {displayFilters() ?
                         <div
                             className="flex col-start-1 col-span-1 py-3 pl-4 xs:pl-0 xs:justify-center xs:px-16 md:px-9 md:py-2 text-black border-t md:border-b border-solid border-gray-400 relative z-5 shadow-[0_3px_2px_-1px_rgba(0,0,0,0.3)] md:shadow-none">
                             <div className="flex flex-col min-w-[90%] xs:min-w-[80%] md:min-w-full gap-2">
