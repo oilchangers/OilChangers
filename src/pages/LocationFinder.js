@@ -40,15 +40,21 @@ const LocationFinder = () => {
                 .build();
 
             signalRConnection.on("StoreWaitTimeChanged", (message) => {
-                const currentStores = storesRef.current;
-                const store = currentStores.find(store => store.id === message.storeId);
-                if (store) {
-                    store.waitTime = message.waitTime;
-                    setStores([...currentStores]);
+                try {
+                    const currentStores = storesRef.current;
+                    const store = currentStores.find(store => store.id === message.storeId);
+                    if (store) {
+                        store.waitTime = message.waitTime;
+                        setStores([...currentStores]);
+                    }
+                }
+                catch (ignore) {
                 }
             });
 
-            signalRConnection.start();
+            signalRConnection.start()
+                .catch(ignore => {
+                });
         }
         catch (ignore) {
         }

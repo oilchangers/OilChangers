@@ -1,12 +1,7 @@
 import { GoogleMap, LoadScript, InfoWindow, OverlayView, Marker } from '@react-google-maps/api';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import LocationCard from '../SummarizedLocationCard/SummarizedLocationCard';
 import { GOOGLE_MAPS_API_KEY } from '../../constants/apiConstants';
-
-const containerStyle = {
-    width: '100%',
-    height: '100%'
-};
 
 const lightGrayStyle = [
     {
@@ -217,17 +212,6 @@ const GenericMap = ({ locations, center, showLegend = false, canBeInteractedWith
     const [zoom, setZoom] = useState(12);
     const legendRef = useRef(null);
 
-    const onLoad = useCallback(async (map) => {
-        // if (!map._legendInjected) {
-        //     const legendDiv = document.createElement("div");
-        //     legendDiv.innerHTML = legendHTML;
-        //     map.controls[window.google.maps.ControlPosition.LEFT_TOP].push(legendDiv);
-        //     map._legendInjected = true;
-
-        // }
-
-    }, [legendHTML]);
-
     useEffect(() => {
         if (locations && locations.length > 0) {
             setMarkers(locations.map((location) => {
@@ -288,7 +272,6 @@ const GenericMap = ({ locations, center, showLegend = false, canBeInteractedWith
                     streetViewControl: false,
                     keyboardShortcuts: false
                 }}
-                onLoad={onLoad}
             >
                 {/* Display the markers for the stores */}
                 {markers}

@@ -193,16 +193,20 @@ const LocationFinderMap = (props) => {
     const mapRef = useRef(null);
 
     const onLoad = useCallback(async (map) => {
-        mapRef.current = map;
+        try {
+            mapRef.current = map;
 
-        setComputingUserLocationCoordinates(true);
-        getCoordinatesFromAddress(props.userLocation).then((coordinates) => {
-            if (coordinates) {
-                setCenter(coordinates);
-            }
-        }).finally(() => {
-            setComputingUserLocationCoordinates(false);
-        })
+            setComputingUserLocationCoordinates(true);
+            getCoordinatesFromAddress(props.userLocation).then((coordinates) => {
+                if (coordinates) {
+                    setCenter(coordinates);
+                }
+            }).finally(() => {
+                setComputingUserLocationCoordinates(false);
+            })
+        }
+        catch (ignore) {
+        }
 
     }, [props.userLocation]);
 

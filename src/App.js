@@ -16,26 +16,24 @@ import LocationFinder from './pages/LocationFinder';
 import CitiesByState from './components/CitiesByState/CitiesByState';
 import StoresByCity from './components/StoresByCity/StoresByCity';
 import StoreDetails from './pages/StoreDetails';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import GenericErrorPage from './pages/Error/GenericErrorPage';
 
 function App() {
-  const [title, updateTitle] = useState(null);
   const [errorMessage, updateErrorMessage] = useState(null);
   return (
     <Router>
       <div className="App">
-        <Header title={title} />
+        <Header />
         <div className="container d-flex align-items-center flex-column">
-          <Routes>
-            <Route path="/" exact={true} element={<LocationFinder />} />
-            <Route path="/register" element={<RegistrationForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
-            <Route path="/login" element={<LoginForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
-            <Route path="/UpdateProfileForm" element={<UpdateProfileForm showError={updateErrorMessage} updateTitle={updateTitle} />} />
-            <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
-            <Route path="/locations" element={<LocationFinder />} />
-            <Route path="/locations/:stateCode" element={<CitiesByState />} />
-            <Route path="/locations/:stateCode/:city" element={<StoresByCity />} />
-            <Route path="/locations/:stateCode/:city/:idOrAddress" element={<StoreDetails />} />
-          </Routes>
+          <ErrorBoundary fallback={<GenericErrorPage />}>
+            <Routes>
+              <Route path="/" exact={true} element={<LocationFinder />} />
+              <Route path="/:stateCode" element={<CitiesByState />} />
+              <Route path="/:stateCode/:city" element={<StoresByCity />} />
+              <Route path="/:stateCode/:city/:idOrAddress" element={<StoreDetails />} />
+            </Routes>
+          </ErrorBoundary>
           <AlertComponent errorMessage={errorMessage} hideError={updateErrorMessage} />
         </div>
       </div>

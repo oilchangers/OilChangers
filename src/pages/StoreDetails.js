@@ -50,13 +50,18 @@ const LocationDetails = () => {
                 .build();
 
             signalRConnection.on("StoreWaitTimeChanged", (message) => {
-                setStore(prev => ({
-                    ...prev,
-                    waitTime: message.waitTime
-                }));
+                try {
+                    setStore(prev => ({
+                        ...prev,
+                        waitTime: message.waitTime
+                    }));
+                }
+                catch (ignore) {
+                }
             });
 
-            signalRConnection.start();
+            signalRConnection.start().catch(ignore => {
+            });
         }
         catch (ignore) {
         }
