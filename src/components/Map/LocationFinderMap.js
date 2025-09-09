@@ -350,7 +350,7 @@ const LocationFinderMap = (props) => {
                             <LocationInfoWindow
                                 onClose={() => props.setSelectedLocation(null)}
                                 {...props.selectedLocation}
-                                className="px-1 text-xs pt-0 max-w-[20rem]" />
+                                className="px-3 min-w-[20rem] pt-0 max-w-[20rem]" />
                         </div>
 
                     </OverlayViewF>

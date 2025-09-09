@@ -66,14 +66,14 @@ const SummarizedLocationCard = forwardRef((props, ref) => {
                     href={`/locations/${props.state.code.toLowerCase()}/${kebabCase(props.city.toLowerCase())}/${kebabCase(props.addressLine1)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-2">
+                    className="w-full !py-2">
                     View Website
                 </ButtonLink>
                 <ButtonLink
                     href={`https://www.google.com/maps/dir/?api=1&destination=${props.addressLine1}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-2"
+                    className="w-full !py-2"
                 >
                     Get Directions
                 </ButtonLink>

@@ -78,7 +78,7 @@ const LocationDetails = () => {
 
             <DetailedLocationCard
                 store={store}
-                className="bg-white lg:w-[70%] xl:w-[50%] lg:absolute z-50 top-24 left-7 shadow-xl"
+                className="bg-white lg:w-[70%] xl:w-[50%] lg:absolute z-50 top-32 left-6 shadow-xl"
                 isLoading={isLoading}
             />
 

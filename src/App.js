@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
 import Header from './components/Header/Header';
-import LoginForm from './components/LoginForm/LoginForm';
-import RegistrationForm from './components/RegistrationForm/RegistrationForm';
-import UpdateProfileForm from './components/UpdateProfileForm/UpdateProfileForm';
-import Home from './components/Home/Home';
-import PrivateRoute from './utils/PrivateRoute';
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,6 +13,7 @@ import StoresByCity from './components/StoresByCity/StoresByCity';
 import StoreDetails from './pages/StoreDetails';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import GenericErrorPage from './pages/Error/GenericErrorPage';
+import ContactUs from './pages/ContactUs';
 
 function App() {
   const [errorMessage, updateErrorMessage] = useState(null);
@@ -29,9 +25,10 @@ function App() {
           <ErrorBoundary fallback={<GenericErrorPage />}>
             <Routes>
               <Route path="/" exact={true} element={<LocationFinder />} />
-              <Route path="/:stateCode" element={<CitiesByState />} />
-              <Route path="/:stateCode/:city" element={<StoresByCity />} />
-              <Route path="/:stateCode/:city/:idOrAddress" element={<StoreDetails />} />
+              <Route path="/locations/:stateCode" element={<CitiesByState />} />
+              <Route path="/locations/:stateCode/:city" element={<StoresByCity />} />
+              <Route path="/locations/:stateCode/:city/:idOrAddress" element={<StoreDetails />} />
+              <Route path="/contact" element={<ContactUs />} />
             </Routes>
           </ErrorBoundary>
           <AlertComponent errorMessage={errorMessage} hideError={updateErrorMessage} />

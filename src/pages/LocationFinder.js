@@ -218,6 +218,10 @@ const LocationFinder = () => {
         return search && cityOrZipCode;
     }
 
+    const displayUseMyCurrentLocation = () => {
+        return !hasUserRequestedCurrentLocation && isCurrentLocationSelectionVisible;
+    }
+
     return (
         <>
             <Helmet>
@@ -226,9 +230,9 @@ const LocationFinder = () => {
             </Helmet>
 
             <div className="flex flex-col w-screen h-screen">
-                <div className="grid [grid-template-rows:auto_auto_2fr_auto_4fr] md:grid-rows-[auto_auto_400px] md:grid-cols-[21rem_2fr]  w-[100%] min-h-[160vh] md:min-h-fit">
+                <div className="grid [grid-template-rows:auto_auto_2fr_auto_4fr] md:grid-rows-[auto_auto_400px] md:grid-cols-[21rem_2fr] w-[100%] min-h-[160vh] md:min-h-fit bg-transparent">
                     {/* Search */}
-                    <div className="flex-[1] col-start-1 col-span-1 p-6 xs:px-16 md:px-7 md:py-4 flex flex-col justify-center gap-5">
+                    <div className="flex-[1] col-start-1 col-span-1 !p-[1.5rem] xs:px-16 md:px-7 md:py-4 flex flex-col justify-center gap-5">
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-center">
                                 <h1 className="text-center text-[2rem] md:text-[1.85rem] uppercase font-bold w-max">Find an Oil Changers</h1>
@@ -246,13 +250,13 @@ const LocationFinder = () => {
                                     role="search"
                                     name="location"
                                 />
-                                <Button type="submit" className="md:py-0">
+                                <Button type="submit" className="md:py-0" disabled={isLoadingStores}>
                                     Find locations
                                 </Button>
                             </form>
                         </div>
 
-                        {true &&
+                        {displayUseMyCurrentLocation() &&
                             <div className={`flex items-center gap-2 text-sm`}>
                                 <MyLocationIcon width="1rem" height="1rem" />
                                 <div
@@ -271,11 +275,11 @@ const LocationFinder = () => {
                     {/* Filters */}
                     {displayFilters() ?
                         <div
-                            className="flex col-start-1 col-span-1 py-3 pl-4 xs:pl-0 xs:justify-center xs:px-16 md:px-9 md:py-2 text-black border-t md:border-b border-solid border-gray-400 relative z-5 shadow-[0_3px_2px_-1px_rgba(0,0,0,0.3)] md:shadow-none">
+                            className="flex col-start-1 col-span-1 py-3 pl-4 xs:pl-0 xs:justify-center xs:px-16 md:px-7 md:py-2 text-black border-t md:border-b border-gray-400 shadow-[0_3px_2px_-1px_rgba(0,0,0,0.3)] md:shadow-none">
                             <div className="flex flex-col min-w-[90%] xs:min-w-[80%] md:min-w-full gap-2">
                                 <div className="text-left text-sm font-bold">Filter locations</div>
                                 <div className="flex justify-between gap-5 text-xs">
-                                    <div className="flex flex-col">
+                                    <div className="flex flex-col gap-2">
                                         <label htmlFor="oil-changers" className="flex gap-2 items-center">
                                             <input
                                                 disabled={isLoadingStores}
@@ -287,7 +291,7 @@ const LocationFinder = () => {
                                             />
                                             <span
                                                 title="Oil Changers"
-                                                className="text-wrap hover:underline cursor-pointer"
+                                                className={`text-wrap ${isLoadingStores ? 'pointer-events-none' : 'hover:underline'} cursor-pointer`}
                                                 onClick={() => {
                                                     toggleLocationTypeFilter({ target: { checked: isFilterSelected('Oil Changers') } }, 'Oil Changers');
                                                 }}
@@ -308,7 +312,7 @@ const LocationFinder = () => {
                                             />
                                             <span
                                                 title="Oil Changers & Car Wash"
-                                                className="text-wrap hover:underline cursor-pointer"
+                                                className={`text-wrap ${isLoadingStores ? 'pointer-events-none' : 'hover:underline'} cursor-pointer`}
                                                 onClick={() => {
                                                     toggleLocationTypeFilter({ target: { checked: isFilterSelected('Oil Changers & Car Wash') } }, 'Oil Changers & Car Wash');
                                                 }}
@@ -318,7 +322,7 @@ const LocationFinder = () => {
                                         </label>
                                     </div>
 
-                                    <div className="flex flex-col text-xs ">
+                                    <div className="flex flex-col text-xs gap-2">
                                         <label htmlFor="oil-changers-plus-repair" className="flex gap-2 items-center">
                                             <input
                                                 disabled={isLoadingStores}
@@ -332,7 +336,7 @@ const LocationFinder = () => {
                                             />
                                             <span
                                                 title="Oil Changers + Repair"
-                                                className="text-wrap hover:underline cursor-pointer"
+                                                className={`text-wrap ${isLoadingStores ? 'pointer-events-none' : 'hover:underline'} cursor-pointer`}
                                                 onClick={() => {
                                                     toggleLocationTypeFilter({ target: { checked: isFilterSelected('Oil Changers + Repair') } }, 'Oil Changers + Repair');
                                                 }}
@@ -354,7 +358,7 @@ const LocationFinder = () => {
                                             />
                                             <span
                                                 title="Coming Soon"
-                                                className="text-wrap hover:underline cursor-pointer"
+                                                className={`text-wrap ${isLoadingStores ? 'pointer-events-none' : 'hover:underline'} cursor-pointer`}
                                                 onClick={() => {
                                                     toggleLocationTypeFilter({ target: { checked: isFilterSelected('Coming Soon') } }, 'Coming Soon');
                                                 }}
@@ -381,7 +385,7 @@ const LocationFinder = () => {
                     </div>
 
                     {/* Legend */}
-                    <MapLegend className="text-[0.7rem] xs:text-sm leading-[0.9] text-left text-black flex justify-between px-4 py-2 gap-6 md:absolute md:mr-6 left-[23rem] top-[80px] md:bg-white md:shadow-[2px_2px_8px_-2px_rgba(0,0,0,0.2)]" />
+                    <MapLegend className="text-[0.7rem] xs:text-sm leading-[0.9] text-left text-black flex justify-between px-4 py-2 gap-6 md:absolute md:mr-6 left-[23rem] top-[110px] md:bg-white md:shadow-[2px_2px_8px_-2px_rgba(0,0,0,0.2)]" />
 
                     {/* Results */}
                     <div className="col-start-1 col-span-1 relative z-10 flex flex-col overflow-auto">
@@ -393,7 +397,7 @@ const LocationFinder = () => {
                                         <div key={store.id} className={`cursor-pointer hover:bg-gray-100 ${selectedLocation?.id === store.id ? 'bg-gray-100' : ''}`}
                                             ref={(element) => locationRefs.current[store.id] = element}
                                             onClick={() => setSelectedLocation(store)}>
-                                            <div className="flex flex-col my-3 md:my-0 px-4">
+                                            <div className="flex flex-col py-3 md:my-0 px-4">
                                                 <SummarizedLocationCard {...store} className="xs:px-12 md:px-0" />
                                             </div>
                                             <div className="border-t border-gray-400 mt-3" />

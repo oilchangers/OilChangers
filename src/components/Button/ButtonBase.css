@@ -39,3 +39,15 @@
   outline: 1px solid #ffffff !important;
   outline-offset: 2px !important;
 } 
+
+.btn-primary:disabled {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  cursor: not-allowed !important;
+}
+
+.btn-primary:disabled {
+  background-color: #d1d5db !important;
+  color: #6b7280 !important;
+  cursor: not-allowed !important;
+}
