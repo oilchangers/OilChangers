@@ -21,6 +21,10 @@ const useBreakPoint = () => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    if (width < breakpoints.xs) {
+        return null;
+    }
+
     if (width < breakpoints.sm) {
         return "xs";
     }
